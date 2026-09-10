@@ -8,8 +8,8 @@ export const ADMIN_ROLES = ["Admin", "Manager", "Support Executive", "Sales Exec
 // Enforced in AdminLayout: nav items are filtered and direct-URL access is
 // blocked for sections outside a staff member's role.
 export const ADMIN_ROLE_ACCESS = {
-  Admin: ["dashboard", "merchants", "kyc", "transactions", "settlements", "service-requests", "support-tickets", "staff"],
-  Manager: ["dashboard", "merchants", "kyc", "transactions", "settlements", "service-requests", "support-tickets"],
+  Admin: ["dashboard", "merchants", "kyc", "transactions", "settlements", "service-requests", "support-tickets", "staff", "banners"],
+  Manager: ["dashboard", "merchants", "kyc", "transactions", "settlements", "service-requests", "support-tickets", "banners"],
   "Support Executive": ["dashboard", "merchants", "transactions", "support-tickets"],
   "Sales Executive": ["dashboard", "merchants", "service-requests"],
   "Verification Officer": ["dashboard", "merchants", "kyc"],
@@ -24,6 +24,7 @@ export const ADMIN_NAV_LABELS = {
   "service-requests": "Service Requests",
   "support-tickets": "Support Tickets",
   staff: "Staff Management",
+  banners: "Promo Banners",
 };
 
 // `adminRole` is null for Sir's own Super Admin account — always full access.

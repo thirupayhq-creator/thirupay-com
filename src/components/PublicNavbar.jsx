@@ -6,6 +6,7 @@ import { NAV_PRODUCT_GROUPS } from "../data/landingContent";
 const NAV_LINKS = [
   { to: "/", label: "Home", end: true },
   { to: "/about", label: "About" },
+  { to: "/investment-partnership", label: "Investment & Partnership" },
   { to: "/download", label: "Get the App" },
   { to: "/contact", label: "Contact" },
 ];

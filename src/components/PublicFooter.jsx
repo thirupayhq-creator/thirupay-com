@@ -24,6 +24,7 @@ export default function PublicFooter() {
             <li><Link to="/contact" className="hover:text-green-800">Contact us</Link></li>
             <li><Link to="/contact#faq" className="hover:text-green-800">FAQ</Link></li>
             <li><Link to="/login" className="hover:text-green-800">Login</Link></li>
+            <li><Link to="/terms-and-conditions" className="hover:text-green-800">Terms & Conditions</Link></li>
           </ul>
         </div>
         <div>
@@ -31,7 +32,7 @@ export default function PublicFooter() {
           <ul className="space-y-2 text-xs text-green-600">
             <li><Link to="/about" className="hover:text-green-800">About us</Link></li>
             <li>Chennai, Tamil Nadu</li>
-            <li>support@thirupay.in</li>
+            <li>support@thirupay.com</li>
           </ul>
         </div>
       </div>

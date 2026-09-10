@@ -7,11 +7,14 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import Landing from "./pages/Landing";
 import Product from "./pages/Product";
 import About from "./pages/About";
+import InvestmentPartnership from "./pages/InvestmentPartnership";
 import Contact from "./pages/Contact";
 import DownloadApp from "./pages/DownloadApp";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import AdminLogin from "./pages/auth/AdminLogin";
 import PayLink from "./pages/PayLink";
+import TermsAndConditions from "./components/site/TermsAndConditions";
 
 import MerchantLayout from "./components/MerchantLayout";
 import Dashboard from "./pages/merchant/Dashboard";
@@ -35,6 +38,9 @@ import ServiceRequests from "./pages/admin/ServiceRequests";
 import SupportTickets from "./pages/admin/SupportTickets";
 import AdminStaffManagement from "./pages/admin/AdminStaffManagement";
 import MyAttendance from "./pages/admin/MyAttendance";
+// imports section la add pannuங்க
+import AdminBanners from "./pages/admin/AdminBanners";
+import AdminCommission from "./pages/admin/AdminCommission";
 
 export default function App() {
   return (
@@ -46,10 +52,13 @@ export default function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/product" element={<Product />} />
           <Route path="/about" element={<About />} />
+          <Route path="/investment-partnership" element={<InvestmentPartnership />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/download" element={<DownloadApp />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/admin/login" element={<AdminLogin />} /> 
           {/* Public — no login needed, this is what a customer opens to pay */}
           <Route path="/pay/:linkId" element={<PayLink />} />
 
@@ -86,8 +95,10 @@ export default function App() {
             <Route path="kyc" element={<KYCVerification />} />
             <Route path="transactions" element={<TransactionMonitor />} />
             <Route path="settlements" element={<SettlementManagement />} />
+            <Route path="commission" element={<AdminCommission />} /> 
             <Route path="service-requests" element={<ServiceRequests />} />
             <Route path="support-tickets" element={<SupportTickets />} />
+            <Route path="banners" element={<AdminBanners />} />
             <Route path="staff" element={<AdminStaffManagement />} />
             <Route path="my-attendance" element={<MyAttendance />} />
           </Route>

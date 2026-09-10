@@ -17,6 +17,8 @@ const KEYS = {
   CONTACT_MESSAGES: "tp_contact_messages",
   REFUNDS: "tp_refunds",
   BANK_HISTORY: "tp_bank_history",
+  PROMO_BANNERS: "tp_promo_banners",
+  PROMO_SEEDED: "tp_promo_seeded_v1",
   SEEDED: "tp_seeded_v1",
 };
 
@@ -128,6 +130,87 @@ function seed() {
 }
 
 seed();
+
+// Promo banners were added after the initial seed() already ran on most
+// devices — SEEDED being true skips seed() entirely, which would leave
+// banners empty forever. This runs independently, gated by its own flag,
+// so existing merchants/transactions/etc. are untouched.
+function ensurePromoBannersSeeded() {
+  if (read(KEYS.PROMO_SEEDED, false)) return;
+  if (read(KEYS.PROMO_BANNERS, []).length > 0) {
+    write(KEYS.PROMO_SEEDED, true);
+    return;
+  }
+
+  const promoBanners = [
+    {
+      banner_id: "promo_thiru_insurance",
+      order: 0,
+      active: true,
+      badge: "Thiru Insurance",
+      headline: ["Protect your family.", "Secure your future."],
+      subtitle: "Affordable and trusted insurance plans for you and your loved ones.",
+      categories: [
+        { icon: "HeartPulse", label: "Health Insurance" },
+        { icon: "UserRound", label: "Life Insurance" },
+        { icon: "ShieldAlert", label: "Personal Accident" },
+        { icon: "Car", label: "Vehicle Insurance" },
+      ],
+      ctaLabel: "Explore Plans",
+      theme: "blue",
+      illustration: "shield",
+      link: "http://localhost:5174", // TODO: replace with the live Thiru Insurance URL once deployed
+      external: true,
+      appendMerchantParams: true,
+      created_at: new Date(Date.now() - 5 * 86400000).toISOString(),
+    },
+    {
+      banner_id: "promo_soundbox",
+      order: 1,
+      active: true,
+      badge: "ThiruPay SoundBox",
+      headline: ["Never miss a payment.", "Hear every sale."],
+      subtitle: "Instant voice confirmation for every UPI payment you receive.",
+      categories: [
+        { icon: "Volume2", label: "Instant Alerts" },
+        { icon: "BatteryCharging", label: "8hr Battery" },
+        { icon: "Wifi", label: "4G Enabled" },
+      ],
+      ctaLabel: "Order Now",
+      theme: "amber",
+      illustration: "device",
+      link: "/merchant/services",
+      external: false,
+      appendMerchantParams: false,
+      created_at: new Date(Date.now() - 4 * 86400000).toISOString(),
+    },
+    {
+      banner_id: "promo_loan",
+      order: 2,
+      active: true,
+      badge: "Business Loan",
+      headline: ["Grow your business.", "Instant approval."],
+      subtitle: "Collateral-free working capital loans based on your transaction history.",
+      categories: [
+        { icon: "Zap", label: "Quick Disbursal" },
+        { icon: "Percent", label: "Low Interest" },
+        { icon: "FileCheck2", label: "Minimal Docs" },
+      ],
+      ctaLabel: "Check Eligibility",
+      theme: "violet",
+      illustration: "loan",
+      link: "/merchant/services",
+      external: false,
+      appendMerchantParams: false,
+      created_at: new Date(Date.now() - 3 * 86400000).toISOString(),
+    },
+  ];
+
+  write(KEYS.PROMO_BANNERS, promoBanners);
+  write(KEYS.PROMO_SEEDED, true);
+}
+
+ensurePromoBannersSeeded();
 
 // ---------- Accessors ----------
 export const db = {
@@ -436,6 +519,45 @@ export const db = {
     all.unshift(entry);
     write(KEYS.BANK_HISTORY, all);
     return entry;
+  },
+
+  // Promo Banners — Merchant Dashboard carousel, fully admin-managed.
+  getPromoBanners: () => read(KEYS.PROMO_BANNERS, []).sort((a, b) => a.order - b.order),
+  getActivePromoBanners: () =>
+    read(KEYS.PROMO_BANNERS, [])
+      .filter((b) => b.active)
+      .sort((a, b) => a.order - b.order),
+  addPromoBanner: (banner) => {
+    const all = read(KEYS.PROMO_BANNERS, []);
+    const record = { ...banner, banner_id: genId("promo"), order: all.length, created_at: new Date().toISOString() };
+    all.push(record);
+    write(KEYS.PROMO_BANNERS, all);
+    return record;
+  },
+  updatePromoBanner: (bannerId, patch) => {
+    const all = read(KEYS.PROMO_BANNERS, []);
+    const idx = all.findIndex((b) => b.banner_id === bannerId);
+    if (idx > -1) {
+      all[idx] = { ...all[idx], ...patch };
+      write(KEYS.PROMO_BANNERS, all);
+      return all[idx];
+    }
+    return null;
+  },
+  removePromoBanner: (bannerId) => {
+    const all = read(KEYS.PROMO_BANNERS, []).filter((b) => b.banner_id !== bannerId);
+    write(KEYS.PROMO_BANNERS, all);
+  },
+  movePromoBanner: (bannerId, direction) => {
+    // direction: -1 (up/earlier) or 1 (down/later) — swaps `order` with the adjacent banner.
+    const all = read(KEYS.PROMO_BANNERS, []).sort((a, b) => a.order - b.order);
+    const idx = all.findIndex((b) => b.banner_id === bannerId);
+    const swapIdx = idx + direction;
+    if (idx === -1 || swapIdx < 0 || swapIdx >= all.length) return;
+    const tmp = all[idx].order;
+    all[idx].order = all[swapIdx].order;
+    all[swapIdx].order = tmp;
+    write(KEYS.PROMO_BANNERS, all);
   },
 };
 

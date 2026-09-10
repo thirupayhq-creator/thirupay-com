@@ -53,7 +53,7 @@ export default function Contact() {
         {/* Contact details */}
         <div className="space-y-5">
           {[
-            { icon: Mail, label: "Email", value: "support@thirupay.in" },
+            { icon: Mail, label: "Email", value: "support@thirupay.com" },
             { icon: Phone, label: "Phone", value: "+91 98765 43210" },
             { icon: MapPin, label: "Office", value: "Chennai, Tamil Nadu, India" },
             { icon: Clock, label: "Support hours", value: "Mon – Sat, 9:00 AM – 7:00 PM" },

@@ -7,6 +7,7 @@ import { db } from "../../data/mockData";
 import { PAYMENT_MODE_COLORS } from "../../data/paymentModes";
 import StatCard from "../../components/StatCard";
 import StatusBadge from "../../components/StatusBadge";
+import PromoBanner from "../../components/PromoBanner";  
 
 function timeAgo(iso) {
   const diff = Date.now() - new Date(iso).getTime();
@@ -54,9 +55,9 @@ export default function Dashboard() {
     <div className="max-w-6xl">
       <div className="mb-6">
         <h1 className="font-display font-bold text-2xl text-green-700">{t("welcome")}, {merchant?.owner_name?.split(" ")[0]}</h1>
-        <p className="text-sm text-green-300 mt-1">{merchant?.business_name}</p>
+        
       </div>
-
+        <PromoBanner merchant={merchant} />  
       {!isActive && (
         <div className="card p-5 mb-6 border-l-4 border-amber-400 flex items-center gap-4">
           <div className="w-10 h-10 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">

@@ -8,9 +8,9 @@ import { DEVICE_PRICING, calcInvoice } from "../../data/devicePricing";
 import StatusBadge from "../../components/StatusBadge";
 import OrderTracker from "../../components/OrderTracker";
 
-// Thiru Insurance runs as its own separate app/site (see /thiru-insurance project).
-// Locally it runs on port 8080; in production this would be the deployed Thiru Insurance domain.
-const THIRU_INSURANCE_URL = "http://localhost:8080";
+// Thiru Insurance is live at thiruhq.com (deployed via GitHub Pages, custom
+// domain). Update this one line if the domain ever changes.
+const THIRU_INSURANCE_URL = "https://www.thiruhq.com";
 
 const HARDWARE_TYPES = ["soundbox", "pos_device"];
 

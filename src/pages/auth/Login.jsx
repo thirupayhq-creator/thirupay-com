@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogIn, Zap, X, KeyRound, CheckCircle2 } from "lucide-react";
+import { LogIn, Zap, X, KeyRound, CheckCircle2, ShieldCheck } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { db } from "../../data/mockData";
 
@@ -23,9 +23,8 @@ export default function Login() {
     navigate(res.session.role === "admin" ? "/admin" : "/merchant");
   };
 
-  const fillDemo = (role) => {
-    if (role === "admin") setForm({ email: "admin@thirupay.in", password: "admin123" });
-    else setForm({ email: "selvi@shop.com", password: "merchant123" });
+  const fillDemo = () => {
+    setForm({ email: "selvi@shop.com", password: "merchant123" });
   };
 
   return (
@@ -40,7 +39,7 @@ export default function Login() {
 
         <div className="card p-8">
           <h1 className="font-display font-bold text-xl text-green-700 mb-1">Welcome back</h1>
-          <p className="text-sm text-green-300 mb-5">Login to your merchant or admin account</p>
+          <p className="text-sm text-green-300 mb-5">Login to your merchant account</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -89,25 +88,25 @@ export default function Login() {
             <div className="h-px bg-green-100 flex-1" />
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={() => fillDemo("merchant")}
-              className="flex items-center justify-center gap-1.5 text-xs font-semibold py-2 rounded-lg border border-green-100 text-green-600 hover:bg-green-50 transition-colors"
-            >
-              <Zap size={13} /> Merchant demo
-            </button>
-            <button
-              onClick={() => fillDemo("admin")}
-              className="flex items-center justify-center gap-1.5 text-xs font-semibold py-2 rounded-lg border border-green-100 text-green-600 hover:bg-green-50 transition-colors"
-            >
-              <Zap size={13} /> Admin demo
-            </button>
-          </div>
+          <button
+            onClick={fillDemo}
+            className="w-full flex items-center justify-center gap-1.5 text-xs font-semibold py-2 rounded-lg border border-green-100 text-green-600 hover:bg-green-50 transition-colors"
+          >
+            <Zap size={13} /> Merchant demo
+          </button>
 
           <p className="text-center text-sm text-green-400 mt-6">
             New merchant?{" "}
             <Link to="/register" className="text-green-600 font-semibold hover:underline">
               Create an account
+            </Link>
+          </p>
+
+          <p className="text-center text-xs text-green-300 mt-3 flex items-center justify-center gap-1.5">
+            <ShieldCheck size={13} />
+            Admin?{" "}
+            <Link to="/admin/login" className="text-green-600 font-semibold hover:underline">
+              Login here
             </Link>
           </p>
         </div>

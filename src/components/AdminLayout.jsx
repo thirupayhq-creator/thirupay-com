@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { LayoutGrid, Users, ShieldCheck, Receipt, Wallet, LogOut, Sparkles, Search, LifeBuoy, UserCog, ShieldAlert, Clock3 } from "lucide-react";
+import { LayoutGrid, Users, ShieldCheck, Receipt, Wallet, LogOut, Sparkles, Search, LifeBuoy, UserCog, ShieldAlert, Clock3, Megaphone, Percent } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { db } from "../data/mockData";
 import { canAccessAdmin } from "../data/adminRoles";
@@ -12,8 +12,10 @@ const NAV = [
   { to: "/admin/kyc", label: "KYC Verification", navKey: "kyc", icon: ShieldCheck },
   { to: "/admin/transactions", label: "Transactions", navKey: "transactions", icon: Receipt },
   { to: "/admin/settlements", label: "Settlements", navKey: "settlements", icon: Wallet },
+  { to: "/admin/commission", label: "Commission Dashboard", navKey: "commission", icon: Percent },
   { to: "/admin/service-requests", label: "Service Requests", navKey: "service-requests", icon: Sparkles },
   { to: "/admin/support-tickets", label: "Support Tickets", navKey: "support-tickets", icon: LifeBuoy },
+  { to: "/admin/banners", label: "Promo Banners", navKey: "banners", icon: Megaphone },
   { to: "/admin/staff", label: "Staff Management", navKey: "staff", icon: UserCog },
 ];
 
