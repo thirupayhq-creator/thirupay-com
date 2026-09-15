@@ -21,6 +21,7 @@ import Dashboard from "./pages/merchant/Dashboard";
 import KYCUpload from "./pages/merchant/KYCUpload";
 import QRGenerate from "./pages/merchant/QRGenerate";
 import PaymentLinks from "./pages/merchant/PaymentLinks";
+import PayMerchant from "./pages/PayMerchant";
 import Transactions from "./pages/merchant/Transactions";
 import Insights from "./pages/merchant/Insights";
 import Settlements from "./pages/merchant/Settlements";
@@ -38,75 +39,118 @@ import ServiceRequests from "./pages/admin/ServiceRequests";
 import SupportTickets from "./pages/admin/SupportTickets";
 import AdminStaffManagement from "./pages/admin/AdminStaffManagement";
 import MyAttendance from "./pages/admin/MyAttendance";
-// imports section la add pannuங்க
+
 import AdminBanners from "./pages/admin/AdminBanners";
 import AdminCommission from "./pages/admin/AdminCommission";
 
 export default function App() {
+  // Test frontend → backend connection
+  const testBackend = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/test");
+
+      const data = await response.json();
+
+      console.log("Backend response:", data);
+
+      alert(data.message);
+    } catch (error) {
+      console.error("Backend connection failed:", error);
+      alert("Backend connection failed");
+    }
+  };
+
   return (
     <AuthProvider>
       <LanguageProvider>
-      <ToastProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/product" element={<Product />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/investment-partnership" element={<InvestmentPartnership />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/download" element={<DownloadApp />} />
-          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/admin/login" element={<AdminLogin />} /> 
-          {/* Public — no login needed, this is what a customer opens to pay */}
-          <Route path="/pay/:linkId" element={<PayLink />} />
+        <ToastProvider>
+          <BrowserRouter>
 
-          <Route
-            path="/merchant"
-            element={
-              <ProtectedRoute role="merchant">
-                <MerchantLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Dashboard />} />
-            <Route path="kyc" element={<KYCUpload />} />
-            <Route path="qr" element={<QRGenerate />} />
-            <Route path="links" element={<PaymentLinks />} />
-            <Route path="transactions" element={<Transactions />} />
-            <Route path="insights" element={<Insights />} />
-            <Route path="settlements" element={<Settlements />} />
-            <Route path="services" element={<Services />} />
-            <Route path="help" element={<Help />} />
-            <Route path="profile" element={<Profile />} />
-          </Route>
+            <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/product" element={<Product />} />
+              <Route path="/about" element={<About />} />
+              <Route
+                path="/investment-partnership"
+                element={<InvestmentPartnership />}
+              />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/download" element={<DownloadApp />} />
+              <Route
+                path="/terms-and-conditions"
+                element={<TermsAndConditions />}
+              />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
 
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute role="admin">
-                <AdminLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<AdminDashboard />} />
-            <Route path="merchants" element={<MerchantManagement />} />
-            <Route path="kyc" element={<KYCVerification />} />
-            <Route path="transactions" element={<TransactionMonitor />} />
-            <Route path="settlements" element={<SettlementManagement />} />
-            <Route path="commission" element={<AdminCommission />} /> 
-            <Route path="service-requests" element={<ServiceRequests />} />
-            <Route path="support-tickets" element={<SupportTickets />} />
-            <Route path="banners" element={<AdminBanners />} />
-            <Route path="staff" element={<AdminStaffManagement />} />
-            <Route path="my-attendance" element={<MyAttendance />} />
-          </Route>
+              <Route path="/pay/:linkId" element={<PayLink />} />
+              <Route path="/pay" element={<PayMerchant />} />   
 
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </BrowserRouter>
-      </ToastProvider>
+              <Route
+                path="/merchant"
+                element={
+                  <ProtectedRoute role="merchant">
+                    <MerchantLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<Dashboard />} />
+                <Route path="kyc" element={<KYCUpload />} />
+                <Route path="qr" element={<QRGenerate />} />
+                <Route path="links" element={<PaymentLinks />} />
+                <Route path="transactions" element={<Transactions />} />
+                <Route path="insights" element={<Insights />} />
+                <Route path="settlements" element={<Settlements />} />
+                <Route path="services" element={<Services />} />
+                <Route path="help" element={<Help />} />
+                <Route path="profile" element={<Profile />} />
+              </Route>
+
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute role="admin">
+                    <AdminLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<AdminDashboard />} />
+                <Route path="merchants" element={<MerchantManagement />} />
+                <Route path="kyc" element={<KYCVerification />} />
+                <Route path="transactions" element={<TransactionMonitor />} />
+                <Route
+                  path="settlements"
+                  element={<SettlementManagement />}
+                />
+                <Route
+                  path="commission"
+                  element={<AdminCommission />}
+                />
+                <Route
+                  path="service-requests"
+                  element={<ServiceRequests />}
+                />
+                <Route
+                  path="support-tickets"
+                  element={<SupportTickets />}
+                />
+                <Route path="banners" element={<AdminBanners />} />
+                <Route path="staff" element={<AdminStaffManagement />} />
+                <Route
+                  path="my-attendance"
+                  element={<MyAttendance />}
+                />
+              </Route>
+
+              <Route
+                path="*"
+                element={<Navigate to="/login" replace />}
+              />
+            </Routes>
+
+          </BrowserRouter>
+        </ToastProvider>
       </LanguageProvider>
     </AuthProvider>
   );

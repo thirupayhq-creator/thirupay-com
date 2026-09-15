@@ -5,6 +5,7 @@
 export const PAYMENT_MODES = [
   { key: "UPI", label: "UPI", color: "#0B2A4A" },
   { key: "Card", label: "Card", color: "#0B2A4A" },
+  { key: "Net Banking", label: "Net Banking", color: "#7C3AED" },
   { key: "Wallet", label: "Wallet", color: "#0F766E" },
 ];
 
