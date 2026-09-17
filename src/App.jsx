@@ -44,22 +44,6 @@ import AdminBanners from "./pages/admin/AdminBanners";
 import AdminCommission from "./pages/admin/AdminCommission";
 
 export default function App() {
-  // Test frontend → backend connection
-  const testBackend = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/test");
-
-      const data = await response.json();
-
-      console.log("Backend response:", data);
-
-      alert(data.message);
-    } catch (error) {
-      console.error("Backend connection failed:", error);
-      alert("Backend connection failed");
-    }
-  };
-
   return (
     <AuthProvider>
       <LanguageProvider>
