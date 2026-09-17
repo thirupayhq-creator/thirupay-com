@@ -51,7 +51,7 @@ export default function AdminLogin() {
                 autoFocus
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                placeholder="admin@thirupay.in"
+                placeholder="Enter your email"
                 className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-slate-500 focus:ring-2 focus:ring-slate-100 outline-none text-sm"
               />
             </div>
@@ -62,7 +62,7 @@ export default function AdminLogin() {
                 required
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-                placeholder="••••••••"
+                placeholder="Enter your password"
                 className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-slate-500 focus:ring-2 focus:ring-slate-100 outline-none text-sm"
               />
             </div>

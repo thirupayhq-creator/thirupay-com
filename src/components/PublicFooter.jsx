@@ -32,7 +32,7 @@ export default function PublicFooter() {
           <ul className="space-y-2 text-xs text-green-600">
             <li><Link to="/about" className="hover:text-green-800">About us</Link></li>
             <li>Chennai, Tamil Nadu</li>
-            <li>support@thirupay.com</li>
+            <li>jayakrishnan@thirupay.com</li>
           </ul>
         </div>
       </div>

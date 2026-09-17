@@ -261,18 +261,18 @@ export default function InvestmentPartnership() {
           </p>
           <p className="text-sm text-green-700 mb-1">
             Email:{" "}
-            <a href="mailto:investors@thirupay.com" className="text-orange-500 font-medium hover:underline">
-              investors@thirupay.com
+            <a href="mailto:jayakrishnan@thirupay.com" className="text-orange-500 font-medium hover:underline">
+              jayakrishnan@thirupay.com
             </a>
           </p>
           <p className="text-sm text-green-700 mb-8">
             Toll Free:{" "}
-            <a href="tel:18005726367" className="text-orange-500 font-medium hover:underline">
-              1800-XXX-XXXX
+            <a href="tel:9360921283" className="text-orange-500 font-medium hover:underline">
+              9360921283
             </a>
           </p>
           <a
-            href="mailto:investors@thirupay.com"
+            href="mailto:jayakrishnan@thirupay.com"
             className="inline-flex items-center gap-2 bg-brand shadow-brand hover:opacity-95 text-white font-semibold px-7 py-3 rounded-xl text-sm transition-opacity"
           >
             Contact Us Today <ArrowRight size={16} />
