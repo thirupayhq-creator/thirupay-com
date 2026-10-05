@@ -1,12 +1,13 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LayoutGrid, QrCode, Link2, Receipt, Wallet, User, LogOut, Sparkles, Languages, LifeBuoy, BarChart3, Gift, Volume2 } from "lucide-react";
+import { LayoutGrid, QrCode, Link2, Receipt, Wallet, User, LogOut, Sparkles, Languages, LifeBuoy, BarChart3, Gift, Volume2, Megaphone, X } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
 import { useToast } from "../context/ToastContext";
 import { db } from "../data/mockData";
 import { BUSINESS_TOOLS } from "../data/businessTools";
 import { getSoundboxSettings } from "../data/soundboxData";
+import { getAnnouncements, isAnnouncementDismissed, dismissAnnouncement } from "../data/announcements";
 import { announcementText, speak } from "../utils/voiceAlert";
 import { usePaymentAlerts } from "../hooks/usePaymentAlerts";
 import NotificationBell from "./NotificationBell";
@@ -44,6 +45,13 @@ export default function MerchantLayout() {
   const { lang, toggleLanguage, t } = useLanguage();
   const navigate = useNavigate();
   const merchant = session?.merchantId ? db.getMerchantById(session.merchantId) : null;
+
+  const [, setDismissTick] = useState(0);
+  const latestAnnouncement = getAnnouncements().find((a) => !isAnnouncementDismissed(a.id));
+  const handleDismissAnnouncement = (id) => {
+    dismissAnnouncement(id);
+    setDismissTick((t) => t + 1);
+  };
   const isActive = merchant?.status === "active";
   const { showToast } = useToast();
 
@@ -207,6 +215,28 @@ export default function MerchantLayout() {
             )}
           </div>
         </header>
+
+        {merchant?.status === "suspended" && (
+          <div className="bg-rose-50 border-b border-rose-200 px-4 md:px-8 py-2.5 text-xs md:text-sm text-rose-700 font-medium">
+            🚫 Your account has been blocked by ThiruPay. You can't accept payments right now — contact support if you think this is a mistake.
+          </div>
+        )}
+        {merchant?.status !== "suspended" && merchant?.review_flag && (
+          <div className="bg-amber-50 border-b border-amber-200 px-4 md:px-8 py-2.5 text-xs md:text-sm text-amber-700 font-medium">
+            🔍 Your account is under review by our team. You can keep accepting payments in the meantime.
+          </div>
+        )}
+        {latestAnnouncement && (
+          <div className="bg-blue-50 border-b border-blue-200 px-4 md:px-8 py-2.5 text-xs md:text-sm text-blue-700 font-medium flex items-start justify-between gap-3">
+            <span>
+              <Megaphone size={13} className="inline -mt-0.5 mr-1.5" />
+              <strong>{latestAnnouncement.title}:</strong> {latestAnnouncement.body}
+            </span>
+            <button onClick={() => handleDismissAnnouncement(latestAnnouncement.id)} className="shrink-0 text-blue-400 hover:text-blue-700">
+              <X size={14} />
+            </button>
+          </div>
+        )}
 
         {/* pb-24 on phones so content never hides behind the fixed bottom tab bar */}
         <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-8">

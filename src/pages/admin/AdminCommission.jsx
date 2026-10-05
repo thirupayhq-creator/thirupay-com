@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Wallet, TrendingUp, Receipt, Percent, ChevronDown, Check } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { db } from "../../data/mockData";
-import { computeFee, MDR_PERCENT } from "../../data/feeConfig";
+import { computeFee, getMdrPercent } from "../../data/feeConfig";
 import StatCard from "../../components/StatCard";
 
 const RANGES = [
@@ -80,7 +80,7 @@ export default function AdminCommission() {
         <div>
           <h1 className="font-display font-bold text-2xl text-green-700 mb-1">Commission Dashboard</h1>
           <p className="text-sm text-green-300">
-            ThiruPay's earnings from merchant transactions — {MDR_PERCENT}% MDR on every successful payment.
+            ThiruPay's earnings from merchant transactions — {getMdrPercent()}% MDR on every successful payment.
           </p>
         </div>
 
@@ -132,7 +132,7 @@ export default function AdminCommission() {
           value={`₹${avgCommission.toLocaleString("en-IN", { maximumFractionDigits: 2 })}`}
           sub={range.label.toLowerCase()}
         />
-        <StatCard icon={Percent} label="Current MDR Rate" value={`${MDR_PERCENT}%`} sub="flat, all merchants" accent="green" />
+        <StatCard icon={Percent} label="Current MDR Rate" value={`${getMdrPercent()}%`} sub="flat, all merchants" accent="green" />
       </div>
 
       <div className="card p-5 mb-6">

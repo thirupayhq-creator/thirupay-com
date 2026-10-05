@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   ShieldPlus,
   CheckCircle2,
@@ -9,7 +9,6 @@ import {
   Smartphone,
   HeartPulse,
   Clock,
-  ArrowRight,
 } from "lucide-react";
 
 export default function InsuranceShowcase() {

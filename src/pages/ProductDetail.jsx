@@ -12,7 +12,6 @@ import {
   Lock,
   Building2,
   CheckCircle2,
-  TrendingUp,
   Store,
 } from "lucide-react";
 import PublicNavbar from "../components/PublicNavbar";
@@ -365,7 +364,7 @@ export default function ProductDetail() {
                   </tr>
                 </thead>
                 <tbody>
-                  {item.comparison.map((row, i) => (
+                  {item.comparison.map((row) => (
                     <tr key={row.metric} className="border-t border-slate-100 hover:bg-slate-50/60 transition-colors">
                       <td className="py-3.5 px-5 text-xs font-bold text-green-900">
                         {row.metric}

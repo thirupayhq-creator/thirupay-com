@@ -65,7 +65,6 @@ function TransactionReports({ allTxns }) {
   const successTxns = inRange.filter((t) => t.status === "success");
   const failedTxns = inRange.filter((t) => t.status !== "success");
   const totalVolume = successTxns.reduce((s, t) => s + t.amount, 0);
-  const successRate = inRange.length > 0 ? Math.round((successTxns.length / inRange.length) * 100) : 0;
 
   // Payment mode breakup within range
   const modeMap = {};

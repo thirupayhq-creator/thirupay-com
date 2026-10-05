@@ -1,14 +1,9 @@
 import { useState } from "react";
 import {
   Megaphone, Plus, Trash2, Pencil, Eye, EyeOff, ArrowUp, ArrowDown, X,
-  HeartPulse, UserRound, ShieldAlert, Car, Volume2, BatteryCharging, Wifi, Zap, Percent, FileCheck2,
 } from "lucide-react";
 import { db } from "../../data/mockData";
 import { PROMO_THEMES, PROMO_ILLUSTRATIONS, PROMO_ICONS } from "../../data/promoBanners";
-
-const CATEGORY_ICONS = {
-  HeartPulse, UserRound, ShieldAlert, Car, Volume2, BatteryCharging, Wifi, Zap, Percent, FileCheck2,
-};
 
 const EMPTY_FORM = {
   badge: "",
@@ -239,7 +234,7 @@ function BannerForm({ initial, onCancel, onSave }) {
 }
 
 export default function AdminBanners() {
-  const [tick, setTick] = useState(0);
+  const [, setTick] = useState(0);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const banners = db.getPromoBanners();

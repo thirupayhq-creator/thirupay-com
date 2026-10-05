@@ -2,21 +2,15 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Volume2,
-  VolumeX,
-  Volume1,
-  Wifi,
   Radio,
   BatteryCharging,
-  Sparkles,
   ShieldCheck,
-  CheckCircle2,
   Play,
 } from "lucide-react";
 
 export default function SoundboxShowcase() {
   const [lang, setLang] = useState("ta"); // "ta" | "en"
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(80);
   const [lastAmount, setLastAmount] = useState(500);
 
   const playVoiceAlert = (selectedLang, amount) => {

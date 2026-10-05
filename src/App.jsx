@@ -18,6 +18,7 @@ import RegisterAccount from "./pages/register/RegisterAccount";
 import RegisterBusiness from "./pages/register/RegisterBusiness";
 import RegisterKYC from "./pages/register/RegisterKYC";
 import AdminLogin from "./pages/auth/AdminLogin";
+import SuperAdminLogin from "./pages/auth/SuperAdminLogin";
 import PayLink from "./pages/PayLink";
 import TermsAndConditions from "./components/site/TermsAndConditions";
 
@@ -54,23 +55,17 @@ import MyAttendance from "./pages/admin/MyAttendance";
 import AdminBanners from "./pages/admin/AdminBanners";
 import AdminCommission from "./pages/admin/AdminCommission";
 
+import SuperAdminLayout from "./components/SuperAdminLayout";
+import RolesPermissions from "./pages/superadmin/RolesPermissions";
+import CompanyDocuments from "./pages/superadmin/CompanyDocuments";
+import SystemSettings from "./pages/superadmin/SystemSettings";
+import AuditLog from "./pages/superadmin/AuditLog";
+import ManageAdmins from "./pages/superadmin/ManageAdmins";
+import RiskMonitoring from "./pages/superadmin/RiskMonitoring";
+import Announcements from "./pages/superadmin/Announcements";
+import SecurityCenter from "./pages/superadmin/SecurityCenter";
+
 export default function App() {
-  // Test frontend → backend connection
-  const testBackend = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/test");
-
-      const data = await response.json();
-
-      console.log("Backend response:", data);
-
-      alert(data.message);
-    } catch (error) {
-      console.error("Backend connection failed:", error);
-      alert("Backend connection failed");
-    }
-  };
-
   return (
     <AuthProvider>
       <LanguageProvider>
@@ -103,6 +98,7 @@ export default function App() {
                 <Route path="kyc" element={<RegisterKYC />} />
               </Route>
               <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/superadmin/login" element={<SuperAdminLogin />} />
 
               <Route path="/pay/:linkId" element={<PayLink />} />
               <Route path="/pay" element={<PayMerchant />} />   
@@ -136,7 +132,7 @@ export default function App() {
               <Route
                 path="/admin"
                 element={
-                  <ProtectedRoute role="admin">
+                  <ProtectedRoute role="admin" excludeSuperAdmin>
                     <AdminLayout />
                   </ProtectedRoute>
                 }
@@ -162,11 +158,43 @@ export default function App() {
                   element={<SupportTickets />}
                 />
                 <Route path="banners" element={<AdminBanners />} />
-                <Route path="staff" element={<AdminStaffManagement />} />
                 <Route
                   path="my-attendance"
                   element={<MyAttendance />}
                 />
+              </Route>
+
+              {/* Super Admin Portal — separate route tree, layout and nav from
+                  the Admin/Staff Portal above, but reuses the same underlying
+                  page components (Merchants, KYC, Transactions, etc.) plus
+                  Staff Management and the platform-level pages. */}
+              <Route
+                path="/superadmin"
+                element={
+                  <ProtectedRoute role="admin" requireSuperAdmin>
+                    <SuperAdminLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<AdminDashboard />} />
+                <Route path="merchants" element={<MerchantManagement />} />
+                <Route path="kyc" element={<KYCVerification />} />
+                <Route path="transactions" element={<TransactionMonitor />} />
+                <Route path="settlements" element={<SettlementManagement />} />
+                <Route path="commission" element={<AdminCommission />} />
+                <Route path="service-requests" element={<ServiceRequests />} />
+                <Route path="support-tickets" element={<SupportTickets />} />
+                <Route path="banners" element={<AdminBanners />} />
+                <Route path="staff" element={<AdminStaffManagement />} />
+                <Route path="roles-permissions" element={<RolesPermissions />} />
+                <Route path="company-documents" element={<CompanyDocuments />} />
+                <Route path="system-settings" element={<SystemSettings />} />
+                <Route path="audit-log" element={<AuditLog />} />
+                <Route path="manage-admins" element={<ManageAdmins />} />
+                <Route path="risk-monitoring" element={<RiskMonitoring />} />
+                <Route path="announcements" element={<Announcements />} />
+                <Route path="security-center" element={<SecurityCenter />} />
+                <Route path="my-attendance" element={<MyAttendance />} />
               </Route>
 
               <Route

@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, ShieldCheck, XCircle, Loader2 } from "lucide-react";
 import { db, genId } from "../data/mockData";
-import { PAYMENT_MODES } from "../data/paymentModes";
+import { getEnabledPaymentModes } from "../data/paymentModes";
 import { useToast } from "../context/ToastContext";
 
 // Public customer checkout page reached by scanning a merchant's STATIC QR:
@@ -32,8 +32,7 @@ export default function PayMerchant() {
 
   const [amount, setAmount] = useState(presetAmount || "");
   const [amountError, setAmountError] = useState("");
-  const [selectedMode, setSelectedMode] = useState(null);
-  const [status, setStatus] = useState("form"); // form | processing | success
+    const [status, setStatus] = useState("form"); // form | processing | success
   const [paidTxn, setPaidTxn] = useState(null);
 
   const numericAmount = Number(amount);
@@ -58,7 +57,6 @@ export default function PayMerchant() {
 
   const handlePay = (mode) => {
     if (!validate()) return;
-    setSelectedMode(mode);
     setStatus("processing");
 
     // Mock gateway delay — this is the seam a real payment gateway call
@@ -192,7 +190,7 @@ export default function PayMerchant() {
                 </p>
 
                 <div className="space-y-2">
-                  {PAYMENT_MODES.map((m) => (
+                  {getEnabledPaymentModes().map((m) => (
                     <button
                       key={m.key}
                       onClick={() => handlePay(m.key)}

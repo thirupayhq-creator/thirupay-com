@@ -55,7 +55,12 @@ export default function Contact() {
           {[
             { icon: Mail, label: "Email", value: "jayakrishnan@thirupay.com" },
             { icon: Phone, label: "Phone", value: "+91 9360921283" },
-            { icon: MapPin, label: "Office", value: "Tiruvannamalai, Tamil Nadu, India" },
+            {
+              icon: MapPin,
+              label: "Office",
+              value:
+                "Thirupay Technologies Private Limited, Annai Parvathi Nagar, opposite to Collectorate Office, Vengikkal, Tiruvannamalai - 606604",
+            },
             { icon: Clock, label: "Support hours", value: "Mon – Sat, 9:00 AM – 7:00 PM" },
           ].map((item) => (
             <div key={item.label} className="card p-5 flex items-start gap-4">
@@ -64,7 +69,7 @@ export default function Contact() {
               </div>
               <div>
                 <p className="text-xs text-green-600">{item.label}</p>
-                <p className="text-sm font-semibold text-green-700">{item.value}</p>
+                <p className="text-sm font-semibold text-green-700 leading-snug">{item.value}</p>
               </div>
             </div>
           ))}
@@ -147,7 +152,7 @@ export default function Contact() {
       <section className="max-w-6xl mx-auto px-6 pb-20">
         <div className="card overflow-hidden">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3898.6407438381475!2d79.06321567506475!3d12.272573487982275!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2s!5e0!3m2!1sen!2sin!4v1790148940739!5m2!1sen!2sin"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d124778.27316702453!2d78.99565857982758!3d12.226528614511835!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4c3d7010778e4289%3A0x4a7c742efcc58bf5!2sThiruPay%20Technologies%20Pvt%20Ltd!5e0!3m2!1sen!2sin!4v1790836397145!5m2!1sen!2sin"
             width="100%"
             height="400"
             style={{ border: 0 }}

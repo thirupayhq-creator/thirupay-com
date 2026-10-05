@@ -40,7 +40,7 @@ export default function Profile() {
       const dataUrl = await compressImage(file, { maxWidth: 400, quality: 0.7 });
       const updated = db.updateMerchant(merchant.merchant_id, { business_photo: dataUrl });
       setMerchant(updated);
-    } catch (err) {
+    } catch {
       setPhotoError(t("photoError"));
     } finally {
       setPhotoBusy(false);

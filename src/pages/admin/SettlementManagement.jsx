@@ -7,7 +7,7 @@ function fmtDate(iso) {
 }
 
 export default function SettlementManagement() {
-  const [tick, setTick] = useState(0);
+  const [, setTick] = useState(0);
   const settlements = db.getAllSettlements();
   const merchants = db.getMerchants();
   const merchantName = (id) => merchants.find((m) => m.merchant_id === id)?.business_name || id;

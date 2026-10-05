@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, ShieldCheck, Clock, XCircle, Loader2, RotateCcw, Smartphone, CreditCard, Landmark, Wallet } from "lucide-react";
 import { db, genId } from "../data/mockData";
-import { PAYMENT_MODES } from "../data/paymentModes";
+import { getEnabledPaymentModes } from "../data/paymentModes";
 import { downloadReceiptPDF } from "../utils/receipt";
 import { useToast } from "../context/ToastContext";
 
@@ -17,7 +17,7 @@ export default function PayLink() {
   const { linkId } = useParams();
   const { showToast } = useToast();
   const [status, setStatus] = useState("pay"); // pay | processing | success | failed
-  const [selectedMode, setSelectedMode] = useState(PAYMENT_MODES[0].key);
+  const [selectedMode, setSelectedMode] = useState(getEnabledPaymentModes()[0]?.key);
   const [paidTxn, setPaidTxn] = useState(null);
 
   const link = db.getLinkById(linkId);
@@ -165,7 +165,7 @@ export default function PayLink() {
 
                 <p className="text-xs font-semibold text-green-500 mb-2">Choose payment method</p>
                 <div className="space-y-2 mb-5">
-                  {PAYMENT_MODES.map((m) => {
+                  {getEnabledPaymentModes().map((m) => {
                     const Icon = MODE_ICONS[m.key] || Smartphone;
                     const active = selectedMode === m.key;
                     return (

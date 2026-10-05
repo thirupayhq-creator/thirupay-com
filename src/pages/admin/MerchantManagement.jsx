@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useLocation, Link } from "react-router-dom";
 import { Search, X, Landmark, ShieldCheck, Clock, Building2, MapPin } from "lucide-react";
 import { db } from "../../data/mockData";
 import StatusBadge from "../../components/StatusBadge";
 
 export default function MerchantManagement() {
+  const location = useLocation();
+  const basePath = location.pathname.startsWith("/superadmin") ? "/superadmin" : "/admin";
   const [searchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("q") || "");
   const [merchants, setMerchants] = useState(db.getMerchants());
@@ -64,10 +66,18 @@ export default function MerchantManagement() {
                   >
                     View
                   </button>
-                  {m.status !== "active" && (
+                  {/* "pending"/"rejected" merchants only go active through KYC approval —
+                      Activate here would bypass that check. "suspended" is a
+                      previously-approved merchant, so reactivating directly is fine. */}
+                  {m.status === "suspended" && (
                     <button onClick={() => setStatus(m.merchant_id, "active")} className="text-xs font-semibold text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-lg hover:bg-emerald-50">
-                      Activate
+                      Reactivate
                     </button>
+                  )}
+                  {(m.status === "pending" || m.status === "rejected") && (
+                    <Link to={`${basePath}/kyc`} className="text-xs font-semibold text-amber-700 border border-amber-200 px-3 py-1.5 rounded-lg hover:bg-amber-50 inline-block">
+                      Review in KYC →
+                    </Link>
                   )}
                   {m.status === "active" && (
                     <button onClick={() => setStatus(m.merchant_id, "suspended")} className="text-xs font-semibold text-rose-700 border border-rose-200 px-3 py-1.5 rounded-lg hover:bg-rose-50">

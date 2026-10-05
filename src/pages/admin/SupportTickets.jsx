@@ -8,7 +8,7 @@ function fmtDate(iso) {
 }
 
 export default function SupportTickets() {
-  const [tick, setTick] = useState(0);
+  const [, setTick] = useState(0);
   const [replyDrafts, setReplyDrafts] = useState({});
   const tickets = db.getAllTickets();
   const merchants = db.getMerchants();

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Search, Plus, X, Pencil, Trash2, LogIn, LogOut, Check, Clock3 } from "lucide-react";
 import { db, genId } from "../../data/mockData";
-import { ADMIN_ROLES } from "../../data/adminRoles";
+import { STAFF_ASSIGNABLE_ROLES } from "../../data/adminRoles";
 import StatusBadge from "../../components/StatusBadge";
 
 const TABS = ["Staff", "Attendance", "Leave Requests"];
@@ -26,11 +26,11 @@ function hoursBetween(inIso, outIso) {
   return hrs.toFixed(1);
 }
 
-const emptyForm = { name: "", email: "", mobile: "", role: ADMIN_ROLES[0], branch: "", username: "", password: "" };
+const emptyForm = { name: "", email: "", mobile: "", role: STAFF_ASSIGNABLE_ROLES[0], branch: "", username: "", password: "" };
 
 export default function AdminStaffManagement() {
   const [tab, setTab] = useState("Staff");
-  const [tick, setTick] = useState(0);
+  const [, setTick] = useState(0);
   const refresh = () => setTick((t) => t + 1);
 
   const staffList = db.getAdminStaff();
@@ -177,7 +177,7 @@ export default function AdminStaffManagement() {
             </div>
             <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)} className="px-3 py-2.5 rounded-lg border border-green-100 text-sm bg-white outline-none">
               <option>All</option>
-              {ADMIN_ROLES.map((r) => <option key={r}>{r}</option>)}
+              {STAFF_ASSIGNABLE_ROLES.map((r) => <option key={r}>{r}</option>)}
             </select>
             <select value={branchFilter} onChange={(e) => setBranchFilter(e.target.value)} className="px-3 py-2.5 rounded-lg border border-green-100 text-sm bg-white outline-none">
               <option>All</option>
@@ -423,11 +423,8 @@ export default function AdminStaffManagement() {
                 <div>
                   <label className="block text-xs font-semibold text-green-500 mb-1.5">Role</label>
                   <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} className="w-full px-3 py-2.5 rounded-lg border border-green-100 text-sm bg-white outline-none">
-                    {ADMIN_ROLES.map((r) => <option key={r}>{r}</option>)}
+                    {STAFF_ASSIGNABLE_ROLES.map((r) => <option key={r}>{r}</option>)}
                   </select>
-                  {form.role === "Super Admin" && (
-                    <p className="text-[11px] text-amber-700 mt-1.5">Full platform access — including Staff Management and creating other admins.</p>
-                  )}
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-green-500 mb-1.5">Branch</label>

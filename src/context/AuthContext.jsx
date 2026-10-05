@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback } from "react";
-import { db, genId } from "../data/mockData";
+import { db, genId, FIXED_ADMIN_ROLES } from "../data/mockData";
+import { logAuditEvent } from "../data/auditLog";
 
 const AuthContext = createContext(null);
 
@@ -9,24 +10,51 @@ export function AuthProvider({ children }) {
   const login = useCallback((email, password) => {
     const user = db.findUserByEmail(email);
     if (user) {
-      if (user.password !== password) return { ok: false, error: "Incorrect password." };
+      if (user.password !== password) {
+        logAuditEvent({ actor: email, action: "Failed login attempt", details: "Incorrect password" });
+        return { ok: false, error: "Incorrect password." };
+      }
 
       let merchant = null;
       if (user.role === "merchant") {
         merchant = db.getMerchantByUserId(user.id);
       }
 
-      const newSession = { userId: user.id, role: user.role, name: user.name, merchantId: merchant?.merchant_id || null, adminRole: null, adminStaffId: null };
+      // Fixed platform-level admin accounts (Sir's Super Admin account, the
+      // built-in Admin account, and any extra Admin-tier account created from
+      // Manage Admins) carry their own adminRole field directly. The
+      // FIXED_ADMIN_ROLES map is only a fallback for a record that predates
+      // that field. A user row that's neither of those two emails but somehow
+      // has role "admin" would fall through with adminRole undefined, which
+      // canAccessAdmin treats as "no access" (fail closed).
+      const adminRole = user.role === "admin" ? user.adminRole || FIXED_ADMIN_ROLES[user.email.toLowerCase()] || null : null;
+
+      if (user.role === "admin" && user.status === "deactivated") {
+        logAuditEvent({ actor: email, action: "Failed login attempt", details: "Account deactivated" });
+        return { ok: false, error: "This admin account has been deactivated." };
+      }
+
+      const newSession = { userId: user.id, role: user.role, name: user.name, merchantId: merchant?.merchant_id || null, adminRole, adminStaffId: null };
       db.setSession(newSession);
       setSessionState(newSession);
+      logAuditEvent({ actor: newSession.name, action: "Logged in", details: user.role === "admin" ? adminRole || "Admin" : "Merchant" });
       return { ok: true, session: newSession };
     }
 
     // Not a registered owner/Sir account — check ThiruPay's internal admin staff
     const staff = db.getAdminStaffByEmail(email);
-    if (!staff) return { ok: false, error: "No account found. Please check your email." };
-    if (staff.password !== password) return { ok: false, error: "Incorrect password." };
-    if (staff.status !== "active") return { ok: false, error: "This staff account has been deactivated. Contact your admin." };
+    if (!staff) {
+      logAuditEvent({ actor: email, action: "Failed login attempt", details: "No account found" });
+      return { ok: false, error: "No account found. Please check your email." };
+    }
+    if (staff.password !== password) {
+      logAuditEvent({ actor: email, action: "Failed login attempt", details: "Incorrect password" });
+      return { ok: false, error: "Incorrect password." };
+    }
+    if (staff.status !== "active") {
+      logAuditEvent({ actor: email, action: "Failed login attempt", details: "Staff account deactivated" });
+      return { ok: false, error: "This staff account has been deactivated. Contact your admin." };
+    }
 
     const newSession = {
       userId: staff.staff_id,
@@ -38,6 +66,7 @@ export function AuthProvider({ children }) {
     };
     db.setSession(newSession);
     setSessionState(newSession);
+    logAuditEvent({ actor: newSession.name, action: "Logged in", details: `${staff.role} (staff)` });
     return { ok: true, session: newSession };
   }, []);
 
@@ -111,6 +140,10 @@ export function AuthProvider({ children }) {
   }, []);
 
   const logout = useCallback(() => {
+    const current = db.getSession();
+    if (current) {
+      logAuditEvent({ actor: current.name, action: "Logged out", details: current.role === "admin" ? current.adminRole || "Admin" : "Merchant" });
+    }
     db.clearSession();
     setSessionState(null);
   }, []);

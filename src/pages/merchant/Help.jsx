@@ -4,6 +4,7 @@ import { QrCode, Wallet, ShieldCheck, Sparkles, Users, ChevronDown, LifeBuoy, Ph
 import { useAuth } from "../../context/AuthContext";
 import { db, genId } from "../../data/mockData";
 import { FAQ_CATEGORIES, TICKET_CATEGORIES } from "../../data/helpData";
+import { getSupportContact } from "../../data/supportSettings";
 import StatusBadge from "../../components/StatusBadge";
 
 const ICONS = { QrCode, Wallet, ShieldCheck, Sparkles, Users };
@@ -47,6 +48,8 @@ export default function Help() {
     setTimeout(() => setSubmitted(false), 3000);
   };
 
+  const contact = getSupportContact();
+
   return (
     <div className="max-w-4xl">
       <h1 className="font-display font-bold text-2xl text-green-700 mb-1">Help & Support</h1>
@@ -58,21 +61,21 @@ export default function Help() {
           <div className="w-9 h-9 rounded-lg bg-green-50 text-green-600 flex items-center justify-center shrink-0"><Phone size={16} /></div>
           <div>
             <p className="text-xs text-green-300">Merchant Helpline</p>
-            <p className="text-sm font-semibold text-green-700">1800-266-4787</p>
+            <p className="text-sm font-semibold text-green-700">{contact.helpline}</p>
           </div>
         </div>
         <div className="card p-4 flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-green-50 text-green-600 flex items-center justify-center shrink-0"><Mail size={16} /></div>
           <div>
             <p className="text-xs text-green-300">Email Support</p>
-            <p className="text-sm font-semibold text-green-700">merchants@thirupay.in</p>
+            <p className="text-sm font-semibold text-green-700">{contact.email}</p>
           </div>
         </div>
         <div className="card p-4 flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-green-50 text-green-600 flex items-center justify-center shrink-0"><MessageCircle size={16} /></div>
           <div>
             <p className="text-xs text-green-300">Support Hours</p>
-            <p className="text-sm font-semibold text-green-700">24×7, every day</p>
+            <p className="text-sm font-semibold text-green-700">{contact.hours}</p>
           </div>
         </div>
       </div>

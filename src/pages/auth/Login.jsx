@@ -92,6 +92,14 @@ export default function Login() {
               Login here
             </Link>
           </p>
+
+          <p className="text-center text-xs text-green-300 mt-1.5 flex items-center justify-center gap-1.5">
+            <ShieldCheck size={13} />
+            Super Admin?{" "}
+            <Link to="/superadmin/login" className="text-green-600 font-semibold hover:underline">
+              Login here
+            </Link>
+          </p>
         </div>
       </motion.div>
 

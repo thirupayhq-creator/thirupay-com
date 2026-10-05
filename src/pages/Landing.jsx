@@ -3,21 +3,16 @@ import { motion } from "framer-motion";
 import {
   ArrowRight,
   Star,
-  Check,
   CheckCircle2,
   XCircle,
-  Sparkles,
   ShieldCheck,
   Lock,
   Building2,
   Zap,
-  TrendingUp,
   Banknote,
   Volume2,
   Smartphone,
   ShieldPlus,
-  Store,
-  ChevronRight,
 } from "lucide-react";
 import PublicNavbar from "../components/PublicNavbar";
 import PublicFooter from "../components/PublicFooter";
@@ -42,16 +37,6 @@ const ACCEPTED_APPS = [
   "RuPay UPI",
   "Visa",
   "Mastercard",
-];
-
-const SETTLEMENT_BANKS = [
-  "HDFC Bank",
-  "State Bank of India",
-  "ICICI Bank",
-  "Axis Bank",
-  "Canara Bank",
-  "Indian Bank",
-  "Kotak Mahindra",
 ];
 
 const TAMIL_NADU_CITIES = [

@@ -4,7 +4,7 @@ import { QrCode, Download, Share2, ExternalLink } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
 import { db } from "../../data/mockData";
-import { PAYMENT_MODES } from "../../data/paymentModes";
+import { getEnabledPaymentModes } from "../../data/paymentModes";
 
 export default function QRGenerate() {
   const { session } = useAuth();
@@ -153,7 +153,7 @@ export default function QRGenerate() {
           <QrCode size={13} /> Customer scans this QR to open the ThiruPay payment page
         </p>
         <div className="flex items-center justify-center gap-1.5 mt-2">
-          {PAYMENT_MODES.map((m) => (
+          {getEnabledPaymentModes().map((m) => (
             <span
               key={m.key}
               className="text-[10px] font-semibold px-2 py-0.5 rounded-full border"

@@ -21,7 +21,7 @@ function hoursBetween(inIso, outIso) {
 
 export default function MyAttendance() {
   const { session } = useAuth();
-  const [tick, setTick] = useState(0);
+  const [, setTick] = useState(0);
   const staffId = session.adminStaffId;
   const today = todayStr();
 

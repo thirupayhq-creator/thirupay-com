@@ -4,16 +4,13 @@ import {
   Smartphone,
   CreditCard,
   Wifi,
-  Receipt,
   CheckCircle2,
-  Sparkles,
-  ShieldCheck,
   Zap,
   Printer,
 } from "lucide-react";
 
 export default function POSShowcase() {
-  const [payMode, setPayMode] = useState("tap"); // "tap" | "chip"
+  const [, setPayMode] = useState("tap"); // "tap" | "chip"
   const [isProcessing, setIsProcessing] = useState(false);
   const [paid, setPaid] = useState(false);
   const [printed, setPrinted] = useState(false);

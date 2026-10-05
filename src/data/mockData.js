@@ -51,7 +51,8 @@ function seed() {
   if (read(KEYS.SEEDED, false)) return;
 
   const users = [
-    { id: "u_admin1", name: "Admin (Sir)", email: "admin@thirupay.in", phone: "9999900000", role: "admin", password: "admin123" },
+    { id: "u_admin1", name: "Admin (Sir)", email: "admin@thirupay.in", phone: "9999900000", role: "admin", adminRole: "Super Admin", status: "active", password: "admin123" },
+    { id: "u_admin2", name: "Admin", email: "admin.ops@thirupay.in", phone: "9999900001", role: "admin", adminRole: "Admin", status: "active", password: "admin123" },
     { id: "u_merchant1", name: "Selvi Kumar", email: "selvi@shop.com", phone: "9840011122", role: "merchant", password: "merchant123" },
   ];
 
@@ -130,6 +131,41 @@ function seed() {
 }
 
 seed();
+
+// Sir's account and the second built-in Admin account are fixed, platform-level
+// identities — never created or edited via Staff Management (that page only
+// creates ADMIN_STAFF records for Manager / Sales Executive / Support Executive /
+// Verification Officer). Each USERS-table admin record carries its own
+// `adminRole` field directly now (see Manage Admins page); this map is kept
+// only as a fallback for any already-persisted record that predates that field.
+export const FIXED_ADMIN_ROLES = {
+  "admin@thirupay.in": "Super Admin",
+  "admin.ops@thirupay.in": "Admin",
+};
+
+// One-time migration for browsers that seeded before the fixed Admin account
+// (or the adminRole/status fields) existed: SEEDED being true skips seed()
+// entirely, which would otherwise leave this browser without them. Runs
+// unconditionally (cheap) so existing demo data doesn't need to be wiped.
+(function ensureFixedAdminAccounts() {
+  const users = read(KEYS.USERS, []);
+  let changed = false;
+  if (!users.some((u) => u.email.toLowerCase() === "admin.ops@thirupay.in")) {
+    users.push({ id: "u_admin2", name: "Admin", email: "admin.ops@thirupay.in", phone: "9999900001", role: "admin", adminRole: "Admin", status: "active", password: "admin123" });
+    changed = true;
+  }
+  for (const u of users) {
+    if (u.role === "admin" && !u.adminRole) {
+      u.adminRole = FIXED_ADMIN_ROLES[u.email.toLowerCase()] || "Admin";
+      changed = true;
+    }
+    if (u.role === "admin" && !u.status) {
+      u.status = "active";
+      changed = true;
+    }
+  }
+  if (changed) write(KEYS.USERS, users);
+})();
 
 // Promo banners were added after the initial seed() already ran on most
 // devices — SEEDED being true skips seed() entirely, which would leave
@@ -246,6 +282,28 @@ export const db = {
     return users[idx];
   },
 
+  // Manage Admins (Super Admin Portal) — fixed, platform-level admin-tier
+  // accounts. Separate from Staff Management, which only creates ADMIN_STAFF
+  // records (Manager / Sales Executive / Support Executive / Verification
+  // Officer). Only ever creates "Admin" tier accounts here — Super Admin
+  // itself stays a single, unduplicated identity.
+  getAdminUsers: () => read(KEYS.USERS, []).filter((u) => u.role === "admin"),
+  addAdminUser: ({ name, email, password }) => {
+    const user = { id: genId("u"), name, email, phone: "", role: "admin", adminRole: "Admin", status: "active", password };
+    const users = read(KEYS.USERS, []);
+    users.push(user);
+    write(KEYS.USERS, users);
+    return user;
+  },
+  setAdminUserStatus: (userId, status) => {
+    const users = read(KEYS.USERS, []);
+    const idx = users.findIndex((u) => u.id === userId);
+    if (idx === -1) return null;
+    users[idx] = { ...users[idx], status };
+    write(KEYS.USERS, users);
+    return users[idx];
+  },
+
   // Merchants
   getMerchants: () => read(KEYS.MERCHANTS, []),
   getMerchantById: (id) => read(KEYS.MERCHANTS, []).find((m) => m.merchant_id === id),
@@ -271,6 +329,31 @@ export const db = {
     }
     return null;
   },
+  // Risk/fraud action — Super Admin can block ANY merchant account immediately
+  // (bypasses the normal Admin KYC approve/reject flow; this is a platform-level
+  // risk intervention, not a KYC decision).
+  blockMerchant: (id, reason) => {
+    const merchants = read(KEYS.MERCHANTS, []);
+    const idx = merchants.findIndex((m) => m.merchant_id === id);
+    if (idx > -1) {
+      merchants[idx] = { ...merchants[idx], status: "suspended", block_reason: reason || null, blocked_at: new Date().toISOString() };
+      write(KEYS.MERCHANTS, merchants);
+      return merchants[idx];
+    }
+    return null;
+  },
+  // Flags a merchant "under review" without changing their operational status
+  // — they keep transacting, but see a banner and Super Admin can track it.
+  setMerchantReviewFlag: (id, note, flaggedBy) => {
+    const merchants = read(KEYS.MERCHANTS, []);
+    const idx = merchants.findIndex((m) => m.merchant_id === id);
+    if (idx > -1) {
+      merchants[idx] = { ...merchants[idx], review_flag: note ? { note, flaggedBy, flaggedAt: new Date().toISOString() } : null };
+      write(KEYS.MERCHANTS, merchants);
+      return merchants[idx];
+    }
+    return null;
+  },
 
   // KYC
   getKycByMerchant: (merchantId) => read(KEYS.KYC, []).find((k) => k.merchant_id === merchantId),
@@ -287,11 +370,14 @@ export const db = {
     const all = read(KEYS.KYC, []).filter((k) => k.merchant_id !== merchantId);
     write(KEYS.KYC, all);
   },
-  updateKycStatus: (merchantId, status) => {
+  updateKycStatus: (merchantId, status, reviewer) => {
     const all = read(KEYS.KYC, []);
     const idx = all.findIndex((k) => k.merchant_id === merchantId);
     if (idx > -1) {
       all[idx].verification_status = status;
+      // Who approved/rejected and when — Sir asked to be able to see this.
+      all[idx].reviewed_by = reviewer?.name || null;
+      all[idx].reviewed_at = new Date().toISOString();
       write(KEYS.KYC, all);
       return all[idx];
     }

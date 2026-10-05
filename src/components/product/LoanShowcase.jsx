@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Banknote,
   CheckCircle2,
@@ -96,7 +96,7 @@ export default function LoanShowcase() {
                 { months: 3, label: "3 Months (90 Days)" },
                 { months: 6, label: "6 Months (180 Days)" },
                 { months: 12, label: "12 Months (365 Days)" },
-              ].map(({ months, label }) => (
+              ].map(({ months }) => (
                 <button
                   key={months}
                   onClick={() => {

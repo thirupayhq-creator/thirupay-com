@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { FileText, Check, X, Eye, AlertTriangle, ChevronDown, ChevronUp } from "lucide-react";
+import { FileText, Check, X, Eye, AlertTriangle, ChevronDown, ChevronUp, Ban, Flag, FlagOff, ShieldCheck } from "lucide-react";
 import { db } from "../../data/mockData";
+import { useAuth } from "../../context/AuthContext";
+import { logAuditEvent } from "../../data/auditLog";
 import StatusBadge from "../../components/StatusBadge";
 
 const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
@@ -49,7 +51,11 @@ function DocRow({ label, value, fileName, fileUrl, viewKey, viewedSet, onView })
 }
 
 export default function KYCVerification() {
-  const [tick, setTick] = useState(0);
+  const { session } = useAuth();
+  // Super Admin oversees KYC (can open every document) but does not approve or
+  // reject — that is the Admin's job.
+  const isSuperAdmin = session?.adminRole === "Super Admin";
+  const [, setTick] = useState(0);
   const [viewed, setViewed] = useState(new Set());
   const [expanded, setExpanded] = useState(new Set());
   const merchants = db.getMerchants();
@@ -59,7 +65,8 @@ export default function KYCVerification() {
     .filter((r) => r.kyc);
 
   const decide = (merchantId, decision) => {
-    db.updateKycStatus(merchantId, decision);
+    if (isSuperAdmin) return;
+    db.updateKycStatus(merchantId, decision, session);
     db.updateMerchant(merchantId, { status: decision === "approved" ? "active" : "rejected" });
     setTick((t) => t + 1);
   };
@@ -71,9 +78,40 @@ export default function KYCVerification() {
   const toggleExpanded = (merchantId) => {
     setExpanded((prev) => {
       const next = new Set(prev);
-      next.has(merchantId) ? next.delete(merchantId) : next.add(merchantId);
+      if (next.has(merchantId)) next.delete(merchantId);
+      else next.add(merchantId);
       return next;
     });
+  };
+
+  // Risk/fraud actions — Super Admin only. These sit outside the normal Admin
+  // KYC approve/reject flow: blocking is an urgent platform-level risk call,
+  // and flagging for review doesn't touch the merchant's operational status.
+  const handleBlock = (merchant) => {
+    if (merchant.status === "suspended") {
+      if (!window.confirm(`Reactivate ${merchant.business_name}? They'll be able to accept payments again.`)) return;
+      db.updateMerchant(merchant.merchant_id, { status: "active", block_reason: null });
+      logAuditEvent({ actor: session?.name || "Super Admin", action: "Reactivated merchant", details: merchant.business_name });
+    } else {
+      const reason = window.prompt(`Block ${merchant.business_name} for fraud/risk? This immediately stops them accepting payments.\n\nReason (shown in the audit log):`);
+      if (reason === null) return; // cancelled
+      db.blockMerchant(merchant.merchant_id, reason || "No reason given");
+      logAuditEvent({ actor: session?.name || "Super Admin", action: "Blocked merchant (fraud/risk)", details: `${merchant.business_name}${reason ? ` — ${reason}` : ""}` });
+    }
+    setTick((t) => t + 1);
+  };
+
+  const handleReviewFlag = (merchant) => {
+    if (merchant.review_flag) {
+      db.setMerchantReviewFlag(merchant.merchant_id, null, null);
+      logAuditEvent({ actor: session?.name || "Super Admin", action: "Cleared review flag", details: merchant.business_name });
+    } else {
+      const note = window.prompt(`Flag ${merchant.business_name} for review? They'll see "Your account is under review" — they can keep transacting.\n\nNote (internal, shown in the audit log):`);
+      if (!note) return; // cancelled or empty
+      db.setMerchantReviewFlag(merchant.merchant_id, note, session?.name || "Super Admin");
+      logAuditEvent({ actor: session?.name || "Super Admin", action: "Flagged merchant for review", details: `${merchant.business_name} — ${note}` });
+    }
+    setTick((t) => t + 1);
   };
 
   return (
@@ -104,7 +142,7 @@ export default function KYCVerification() {
 
           return (
             <div key={mId} className="card p-5">
-              <div className="flex items-center gap-5">
+              <div className="flex items-center gap-5 flex-wrap gap-y-2">
                 <div className="w-11 h-11 rounded-xl bg-green-50 text-green-600 flex items-center justify-center shrink-0">
                   <FileText size={20} />
                 </div>
@@ -120,11 +158,35 @@ export default function KYCVerification() {
                       {identityLabel}: <span className="font-mono">{kyc.identity_doc_number || "—"}</span> · Directors:{" "}
                       {kyc.number_of_directors || "—"}
                     </p>
+                    {kyc.verification_status !== "pending" && kyc.reviewed_by && (
+                      <p className="text-[11px] text-green-300 mt-0.5">
+                        {kyc.verification_status === "approved" ? "Approved" : "Rejected"} by {kyc.reviewed_by}
+                        {kyc.reviewed_at ? ` · ${new Date(kyc.reviewed_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}` : ""}
+                      </p>
+                    )}
                   </div>
                   {isOpen ? <ChevronUp size={16} className="text-green-300" /> : <ChevronDown size={16} className="text-green-300" />}
                 </button>
                 <StatusBadge status={kyc.verification_status} />
-                {kyc.verification_status === "pending" && (
+                {merchant.status === "suspended" && (
+                  <span className="text-[11px] font-semibold text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-1 rounded-lg shrink-0">
+                    Blocked
+                  </span>
+                )}
+                {merchant.review_flag && (
+                  <span
+                    title={merchant.review_flag.note}
+                    className="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-lg shrink-0"
+                  >
+                    🚩 Under review
+                  </span>
+                )}
+                {kyc.verification_status === "pending" && isSuperAdmin && (
+                  <span className="text-[11px] font-semibold text-amber-600 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-lg shrink-0">
+                    View only · Admin approves
+                  </span>
+                )}
+                {kyc.verification_status === "pending" && !isSuperAdmin && (
                   <div className="flex gap-2 shrink-0">
                     <button
                       onClick={() => decide(mId, "approved")}
@@ -143,6 +205,34 @@ export default function KYCVerification() {
                       className="flex items-center gap-1.5 text-xs font-semibold text-rose-700 border border-rose-200 px-3 py-1.5 rounded-lg hover:bg-rose-50"
                     >
                       <X size={13} /> Reject
+                    </button>
+                  </div>
+                )}
+                {isSuperAdmin && (
+                  <div className="flex gap-2 shrink-0">
+                    <button
+                      onClick={() => handleReviewFlag(merchant)}
+                      title={merchant.review_flag ? "Clear review flag" : "Flag for review"}
+                      className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
+                        merchant.review_flag
+                          ? "text-slate-600 border border-slate-200 hover:bg-slate-50"
+                          : "text-amber-700 border border-amber-200 hover:bg-amber-50"
+                      }`}
+                    >
+                      {merchant.review_flag ? <FlagOff size={13} /> : <Flag size={13} />}
+                      {merchant.review_flag ? "Clear Flag" : "Flag for Review"}
+                    </button>
+                    <button
+                      onClick={() => handleBlock(merchant)}
+                      title={merchant.status === "suspended" ? "Reactivate merchant" : "Block for fraud/risk"}
+                      className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
+                        merchant.status === "suspended"
+                          ? "text-emerald-700 border border-emerald-200 hover:bg-emerald-50"
+                          : "text-rose-700 border border-rose-200 hover:bg-rose-50"
+                      }`}
+                    >
+                      {merchant.status === "suspended" ? <ShieldCheck size={13} /> : <Ban size={13} />}
+                      {merchant.status === "suspended" ? "Reactivate" : "Block"}
                     </button>
                   </div>
                 )}

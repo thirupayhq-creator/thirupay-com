@@ -4,7 +4,7 @@ import { Link2, IndianRupee, Copy, CheckCircle2, Share2, QrCode, Download, Chevr
 import { useAuth } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
 import { db, genId } from "../../data/mockData";
-import { PAYMENT_MODES } from "../../data/paymentModes";
+import { getEnabledPaymentModes } from "../../data/paymentModes";
 import StatusBadge from "../../components/StatusBadge";
 import { useToast } from "../../context/ToastContext";
 
@@ -264,7 +264,7 @@ export default function PaymentLinks() {
                         </button>
                         {modePickerFor === l.link_id ? (
                           <div className="flex items-center gap-1 border border-green-100 rounded-lg px-1.5 py-1">
-                            {PAYMENT_MODES.map((m) => (
+                            {getEnabledPaymentModes().map((m) => (
                               <button
                                 key={m.key}
                                 onClick={() => simulatePaid(l, m.key)}

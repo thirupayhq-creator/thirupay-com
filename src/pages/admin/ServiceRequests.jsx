@@ -84,7 +84,7 @@ function AssignDeviceModal({ request, onClose, onDone }) {
 }
 
 export default function ServiceRequests() {
-  const [tick, setTick] = useState(0);
+  const [, setTick] = useState(0);
   const [assignFor, setAssignFor] = useState(null);
   const { showToast } = useToast();
   const requests = db.getAllRequests();

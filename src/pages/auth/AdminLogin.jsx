@@ -5,7 +5,7 @@ import { LogIn, ShieldCheck } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
 export default function AdminLogin() {
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
@@ -19,7 +19,14 @@ export default function AdminLogin() {
       return;
     }
     if (res.session.role !== "admin") {
+      logout();
       setError("This login is for admin accounts only.");
+      return;
+    }
+    // Super Admin accounts belong on the Super Admin Portal, not here.
+    if (res.session.adminRole === "Super Admin") {
+      logout();
+      setError("This account belongs to Super Admin. Please use the Super Admin Portal.");
       return;
     }
     navigate("/admin");
@@ -68,7 +75,19 @@ export default function AdminLogin() {
               />
             </div>
 
-            {error && <p className="text-rose-600 text-xs font-medium">{error}</p>}
+            {error && (
+              <p className="text-rose-600 text-xs font-medium">
+                {error}
+                {error.includes("Super Admin") && (
+                  <>
+                    {" "}
+                    <Link to="/superadmin/login" className="underline">
+                      Go to Super Admin Portal
+                    </Link>
+                  </>
+                )}
+              </p>
+            )}
 
             <button
               type="submit"
@@ -82,6 +101,12 @@ export default function AdminLogin() {
             Not an admin?{" "}
             <Link to="/login" className="text-slate-700 font-semibold hover:underline">
               Merchant login
+            </Link>
+          </p>
+          <p className="text-center text-sm text-slate-400 mt-1.5">
+            Super Admin?{" "}
+            <Link to="/superadmin/login" className="text-slate-700 font-semibold hover:underline">
+              Login here
             </Link>
           </p>
         </div>

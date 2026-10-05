@@ -9,10 +9,6 @@ import {
   CheckCircle2,
   ArrowRight,
   Sparkles,
-  Zap,
-  Building2,
-  Smartphone,
-  ShieldCheck,
 } from "lucide-react";
 
 export default function HomeProductTabs() {

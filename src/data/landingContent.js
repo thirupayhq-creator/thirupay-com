@@ -18,7 +18,6 @@ import {
   Shirt,
   Scissors,
   Users,
-  MapPin,
   TimerReset,
 } from "lucide-react";
 

@@ -137,7 +137,13 @@ export default function PublicFooter() {
                 </p>
                 <ul className="space-y-2.5 text-sm text-green-700/80">
                   <li><Link to="/about" className="hover:text-green-900">About us</Link></li>
-                  <li className="text-green-600/70 pt-1">Chennai, Tamil Nadu</li>
+                  <li className="text-green-600/70 pt-1 leading-relaxed">
+                    <span className="font-semibold text-green-700/80">Thirupay Technologies Private Limited</span>
+                    <br />
+                    Annai Parvathi Nagar, opposite to Collectorate Office, Vengikkal,
+                    <br />
+                    Tiruvannamalai - 606604
+                  </li>
                 </ul>
               </div>
             </div>

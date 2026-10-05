@@ -6,7 +6,6 @@ export const translations = {
     // Sidebar
     merchantPortal: "Merchant Portal",
     dashboard: "Dashboard",
-    generateQR: "Generate QR",
     paymentLinks: "Payment Links",
     transactions: "Transactions",
     settlements: "Settlements",
@@ -193,7 +192,6 @@ export const translations = {
     // Sidebar
     merchantPortal: "மர்ச்சன்ட் போர்டல்",
     dashboard: "டாஷ்போர்டு",
-    generateQR: "QR உருவாக்கு",
     paymentLinks: "பேமெண்ட் லிங்க்ஸ்",
     transactions: "பரிவர்த்தனைகள்",
     settlements: "செட்டில்மென்ட்ஸ்",

@@ -1,15 +1,12 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
-  Wallet,
   Building2,
   CheckCircle2,
-  ArrowUpRight,
   Download,
   Clock,
   ShieldCheck,
   RefreshCw,
-  Sparkles,
   Receipt,
 } from "lucide-react";
 
