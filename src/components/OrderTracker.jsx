@@ -6,20 +6,22 @@ const LABELS = {
   approved: "Approved",
   dispatched: "Dispatched",
   delivered: "Delivered",
+  active: "Active",
 };
 
-export default function OrderTracker({ status }) {
+// `stages` lets a Soundbox show its extra "Active" step; other devices use the default four.
+export default function OrderTracker({ status, stages = ORDER_STAGES }) {
   if (status === "rejected") {
     return <p className="text-xs font-medium text-rose-600">This request was rejected.</p>;
   }
 
-  const currentIndex = ORDER_STAGES.indexOf(status);
+  const currentIndex = stages.indexOf(status);
 
   return (
     <div className="flex items-center">
-      {ORDER_STAGES.map((stage, i) => {
+      {stages.map((stage, i) => {
         const done = i <= currentIndex;
-        const isLast = i === ORDER_STAGES.length - 1;
+        const isLast = i === stages.length - 1;
         return (
           <div key={stage} className="flex items-center flex-1 last:flex-none">
             <div className="flex flex-col items-center gap-1 shrink-0">

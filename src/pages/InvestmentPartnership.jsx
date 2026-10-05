@@ -287,7 +287,7 @@ export default function InvestmentPartnership() {
         </h2>
         <p className="text-green-600 text-sm mb-7">Manage all your payments, payouts, and transactions in one place.</p>
         <a
-          href="mailto:investors@thirupay.com"
+          href="mailto:jayakrishnan@thirupay.com"
           className="inline-flex items-center gap-2 bg-brand shadow-brand hover:opacity-95 text-white font-semibold px-7 py-3 rounded-xl text-sm transition-opacity"
         >
           Reach out <ArrowRight size={16} />

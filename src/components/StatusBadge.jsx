@@ -3,6 +3,7 @@ const STYLES = {
   approved: "bg-emerald-50 text-emerald-700 border-emerald-200",
   success: "bg-emerald-50 text-emerald-700 border-emerald-200",
   settled: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  credited: "bg-emerald-50 text-emerald-700 border-emerald-200",
   paid: "bg-emerald-50 text-emerald-700 border-emerald-200",
   delivered: "bg-emerald-50 text-emerald-700 border-emerald-200",
   resolved: "bg-emerald-50 text-emerald-700 border-emerald-200",

@@ -28,3 +28,7 @@ export function calcInvoice({ type, quantity = 1, pricingOption = "onetime" }) {
 // Order lifecycle for hardware requests: requested -> approved -> dispatched -> delivered
 // (or requested -> rejected)
 export const ORDER_STAGES = ["requested", "approved", "dispatched", "delivered"];
+
+// A Soundbox has one more step: once it's delivered, admin activates it and it starts
+// announcing payments.
+export const SOUNDBOX_STAGES = [...ORDER_STAGES, "active"];

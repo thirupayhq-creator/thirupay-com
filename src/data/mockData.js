@@ -256,6 +256,11 @@ export const db = {
     write(KEYS.MERCHANTS, merchants);
     return merchant;
   },
+  // Used only to roll back a half-finished registration.
+  removeMerchant: (merchantId) => {
+    const merchants = read(KEYS.MERCHANTS, []).filter((m) => m.merchant_id !== merchantId);
+    write(KEYS.MERCHANTS, merchants);
+  },
   updateMerchant: (id, patch) => {
     const merchants = read(KEYS.MERCHANTS, []);
     const idx = merchants.findIndex((m) => m.merchant_id === id);
@@ -276,6 +281,11 @@ export const db = {
     else all.push(kycRecord);
     write(KEYS.KYC, all);
     return kycRecord;
+  },
+  // Used only to roll back a half-finished registration.
+  removeKyc: (merchantId) => {
+    const all = read(KEYS.KYC, []).filter((k) => k.merchant_id !== merchantId);
+    write(KEYS.KYC, all);
   },
   updateKycStatus: (merchantId, status) => {
     const all = read(KEYS.KYC, []);
@@ -359,6 +369,16 @@ export const db = {
     all.unshift(request);
     write(KEYS.REQUESTS, all);
     return request;
+  },
+  // Merge fields into a request; `details` is merged into the existing details rather than replaced.
+  updateRequest: (requestId, patch) => {
+    const all = read(KEYS.REQUESTS, []);
+    const idx = all.findIndex((r) => r.request_id === requestId);
+    if (idx === -1) return null;
+    const { details, ...rest } = patch;
+    all[idx] = { ...all[idx], ...rest, ...(details ? { details: { ...all[idx].details, ...details } } : {}) };
+    write(KEYS.REQUESTS, all);
+    return all[idx];
   },
   updateRequestStatus: (requestId, status) => {
     const all = read(KEYS.REQUESTS, []);
@@ -561,4 +581,4 @@ export const db = {
   },
 };
 
-export { KEYS };
+export { KEYS };

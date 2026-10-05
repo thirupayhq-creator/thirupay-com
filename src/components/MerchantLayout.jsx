@@ -1,9 +1,17 @@
+import { Fragment } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LayoutGrid, QrCode, Link2, Receipt, Wallet, User, LogOut, Sparkles, Languages, LifeBuoy, BarChart3 } from "lucide-react";
+import { LayoutGrid, QrCode, Link2, Receipt, Wallet, User, LogOut, Sparkles, Languages, LifeBuoy, BarChart3, Gift, Volume2 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
+import { useToast } from "../context/ToastContext";
 import { db } from "../data/mockData";
+import { BUSINESS_TOOLS } from "../data/businessTools";
+import { getSoundboxSettings } from "../data/soundboxData";
+import { announcementText, speak } from "../utils/voiceAlert";
+import { usePaymentAlerts } from "../hooks/usePaymentAlerts";
 import NotificationBell from "./NotificationBell";
+
+const REQUEST_STATUS_LABEL = { approved: "approved", rejected: "rejected", dispatched: "dispatched", delivered: "delivered", active: "activated" };
 
 const NAV = [
   { to: "/merchant", key: "dashboard", icon: LayoutGrid, end: true },
@@ -11,8 +19,12 @@ const NAV = [
   { to: "/merchant/links", key: "paymentLinks", icon: Link2 },
   { to: "/merchant/transactions", key: "transactions", icon: Receipt },
   { to: "/merchant/insights", key: "insights", icon: BarChart3 },
+  { to: "/merchant/rewards", key: "rewards", icon: Gift },
   { to: "/merchant/settlements", key: "settlements", icon: Wallet },
+  { to: "/merchant/soundbox", key: "soundbox", icon: Volume2 },
   { to: "/merchant/services", key: "services", icon: Sparkles },
+  // "Business Tools" — small-shop tools from the mobile app (see data/businessTools.js)
+  ...BUSINESS_TOOLS.map((tool) => ({ ...tool, group: "businessTools" })),
   { to: "/merchant/help", key: "help", icon: LifeBuoy },
   { to: "/merchant/profile", key: "profile", icon: User },
 ];
@@ -33,6 +45,20 @@ export default function MerchantLayout() {
   const navigate = useNavigate();
   const merchant = session?.merchantId ? db.getMerchantById(session.merchantId) : null;
   const isActive = merchant?.status === "active";
+  const { showToast } = useToast();
+
+  // Soundbox: announce every new payment (only while the merchant's Soundbox is Active).
+  usePaymentAlerts(isActive ? session?.merchantId : null, (txn) => {
+    const text = announcementText(txn.amount);
+    const { voice, volume } = getSoundboxSettings(session.merchantId);
+    showToast({
+      title: "Payment Received",
+      subtitle: `₹${Number(txn.amount).toLocaleString("en-IN")} received successfully · Soundbox: “${text}”`,
+      type: "success",
+      duration: 6000,
+    });
+    if (voice) speak(text, volume);
+  });
 
   const notifications = [];
   if (session?.merchantId) {
@@ -57,10 +83,10 @@ export default function MerchantLayout() {
       .filter((r) => r.status !== "requested")
       .forEach((r) => {
         notifications.push({
-          id: `req-${r.request_id}`,
-          title: `${r.type.replace("_", " ")} request ${r.status === "approved" ? "approved" : "rejected"}`,
-          subtitle: "View details on the Services page",
-          to: "/merchant/services",
+          id: `req-${r.request_id}-${r.status}`,
+          title: `${r.type.replace("_", " ")} request ${REQUEST_STATUS_LABEL[r.status] || r.status}`,
+          subtitle: r.type === "soundbox" ? "View details on the Soundbox page" : "View details on the Services page",
+          to: r.type === "soundbox" ? "/merchant/soundbox" : "/merchant/services",
         });
       });
 
@@ -108,11 +134,14 @@ export default function MerchantLayout() {
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-1">
-          {NAV.map(({ to, key, icon: Icon, end }) => {
+          {NAV.map(({ to, key, icon: Icon, end, group }, i) => {
             const locked = !isActive && to !== "/merchant" && to !== "/merchant/profile";
+            const startsGroup = group && NAV[i - 1]?.group !== group;
+            const endsGroup = group && NAV[i + 1]?.group !== group;
             return (
+              <Fragment key={to}>
+              {startsGroup && <p className="px-3 pt-4 pb-1 text-[10px] font-semibold uppercase tracking-wider text-green-300">{t(group)}</p>}
               <NavLink
-                key={to}
                 to={to}
                 end={end}
                 onClick={(e) => locked && e.preventDefault()}
@@ -130,6 +159,8 @@ export default function MerchantLayout() {
                 {t(key)}
                 {locked && <span className="ml-auto text-[10px] uppercase bg-white/10 px-1.5 py-0.5 rounded">{t("locked")}</span>}
               </NavLink>
+              {endsGroup && <div className="!mt-3 !mb-2 border-t border-white/10" />}
+              </Fragment>
             );
           })}
         </nav>

@@ -54,8 +54,8 @@ export default function Contact() {
         <div className="space-y-5">
           {[
             { icon: Mail, label: "Email", value: "jayakrishnan@thirupay.com" },
-            { icon: Phone, label: "Phone", value: "+91 98765 43210" },
-            { icon: MapPin, label: "Office", value: "Chennai, Tamil Nadu, India" },
+            { icon: Phone, label: "Phone", value: "+91 9360921283" },
+            { icon: MapPin, label: "Office", value: "Tiruvannamalai, Tamil Nadu, India" },
             { icon: Clock, label: "Support hours", value: "Mon – Sat, 9:00 AM – 7:00 PM" },
           ].map((item) => (
             <div key={item.label} className="card p-5 flex items-start gap-4">
@@ -140,6 +140,22 @@ export default function Contact() {
               </motion.form>
             )}
           </AnimatePresence>
+        </div>
+      </section>
+
+      {/* Map */}
+      <section className="max-w-6xl mx-auto px-6 pb-20">
+        <div className="card overflow-hidden">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3898.6407438381475!2d79.06321567506475!3d12.272573487982275!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2s!5e0!3m2!1sen!2sin!4v1790148940739!5m2!1sen!2sin"
+            width="100%"
+            height="400"
+            style={{ border: 0 }}
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="strict-origin-when-cross-origin"
+            title="ThiruPay Office Location"
+          ></iframe>
         </div>
       </section>
 

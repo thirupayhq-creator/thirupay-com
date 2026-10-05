@@ -44,7 +44,12 @@ export default function Product() {
                 <f.icon size={22} />
               </div>
               <p className="font-display font-semibold text-green-700 text-base mb-2">{f.title}</p>
-              <p className="text-sm text-green-600 leading-relaxed">{f.detail}</p>
+              <p className="text-sm text-green-600 leading-relaxed mb-3">{f.detail}</p>
+              {f.slug && (
+                <Link to={`/product/${f.slug}`} className="inline-flex items-center gap-1 text-xs font-semibold text-green-700 hover:text-green-900">
+                  Learn more <ArrowRight size={13} />
+                </Link>
+              )}
             </motion.div>
           ))}
         </div>
@@ -72,7 +77,12 @@ export default function Product() {
                   <s.icon size={22} />
                 </div>
                 <p className="font-display font-semibold text-green-700 text-base mb-2">{s.title}</p>
-                <p className="text-sm text-green-600 leading-relaxed">{s.detail}</p>
+                <p className="text-sm text-green-600 leading-relaxed mb-3">{s.detail}</p>
+                {s.slug && (
+                  <Link to={`/product/${s.slug}`} className="inline-flex items-center gap-1 text-xs font-semibold text-green-700 hover:text-green-900">
+                    Learn more <ArrowRight size={13} />
+                  </Link>
+                )}
               </motion.div>
             ))}
           </div>

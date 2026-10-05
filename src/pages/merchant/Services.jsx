@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Banknote, ShieldPlus, Volume2, Smartphone, Clock, X, ExternalLink, Receipt } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
 import { db, genId } from "../../data/mockData";
-import { DEVICE_PRICING, calcInvoice } from "../../data/devicePricing";
+import { DEVICE_PRICING, SOUNDBOX_STAGES, calcInvoice } from "../../data/devicePricing";
+import { canRequestSoundbox, soundboxFromRequests } from "../../data/soundboxData";
 import StatusBadge from "../../components/StatusBadge";
 import OrderTracker from "../../components/OrderTracker";
 
@@ -41,7 +43,7 @@ function detailsSummary(req) {
     case "pos_device": {
       const plan = req.details.pricingOption === "rental" ? "Rental" : "One-time";
       const device = req.details.deviceType || (req.type === "soundbox" ? "SoundBox" : "POS Device");
-      return `${device} · Qty ${req.details.quantity} · ${plan} · ${fmtMoney(req.details.invoiceTotal || 0)}${req.details.pricingOption === "rental" ? "/mo" : ""}`;
+      return `${device}${req.details.device_id ? ` (${req.details.device_id})` : ""} · Qty ${req.details.quantity} · ${plan} · ${fmtMoney(req.details.invoiceTotal || 0)}${req.details.pricingOption === "rental" ? "/mo" : ""}`;
     }
     default:
       return "";
@@ -53,13 +55,18 @@ export default function Services() {
   const { t } = useLanguage();
   const merchant = db.getMerchantById(session.merchantId);
   const SERVICES = getServices(t);
-  const [activeModal, setActiveModal] = useState(null); // service type or null
+  const [searchParams] = useSearchParams();
   const [requests, setRequests] = useState(db.getRequestsByMerchant(session.merchantId));
+  // The Soundbox page's "Request Soundbox" button lands here with ?request=soundbox and opens the form.
+  const [activeModal, setActiveModal] = useState(() =>
+    searchParams.get("request") === "soundbox" && canRequestSoundbox(soundboxFromRequests(db.getRequestsByMerchant(session.merchantId))) ? "soundbox" : null
+  ); // service type or null
 
   const refresh = () => setRequests(db.getRequestsByMerchant(session.merchantId));
 
   const hasPending = (type) => requests.some((r) => r.type === type && r.status === "requested");
-  const latestStatus = (type) => requests.find((r) => r.type === type)?.status;
+  const sb = soundboxFromRequests(requests);
+  const latestStatus = (type) => (type === "soundbox" ? (sb.state === "none" ? undefined : sb.state) : requests.find((r) => r.type === type)?.status);
 
   const submitRequest = (type, details) => {
     db.addRequest({
@@ -117,6 +124,13 @@ export default function Services() {
                   >
                     Open Thiru Insurance <ExternalLink size={13} />
                   </button>
+                ) : s.type === "soundbox" && !canRequestSoundbox(sb) ? (
+                  <Link
+                    to="/merchant/soundbox"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white transition-colors"
+                  >
+                    {sb.state === "active" ? "Manage Soundbox" : "View request status"}
+                  </Link>
                 ) : (
                   <button
                     disabled={pending}
@@ -156,8 +170,8 @@ export default function Services() {
 
                   {isHardware && (
                     <div className="mt-3 space-y-3">
-                      <OrderTracker status={r.status} />
-                      {r.status !== "requested" && r.status !== "rejected" && (
+                      <OrderTracker status={r.status} stages={r.type === "soundbox" ? SOUNDBOX_STAGES : undefined} />
+                      {r.status !== "requested" && r.status !== "rejected" && r.details.unitPrice != null && (
                         <div className="bg-green-50/60 rounded-lg p-3 text-xs text-green-500 space-y-1">
                           <div className="flex items-center gap-1.5 font-semibold text-green-700 mb-1">
                             <Receipt size={13} /> Invoice
@@ -443,4 +457,4 @@ function RequestModal({ type, merchant, onClose, onSubmit, t }) {
       </motion.div>
     </motion.div>
   );
-}
+}

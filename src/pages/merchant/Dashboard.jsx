@@ -7,6 +7,7 @@ import { db } from "../../data/mockData";
 import { PAYMENT_MODE_COLORS } from "../../data/paymentModes";
 import StatCard from "../../components/StatCard";
 import StatusBadge from "../../components/StatusBadge";
+import { BUSINESS_TOOLS } from "../../data/businessTools";
 import PromoBanner from "../../components/PromoBanner";  
 
 function timeAgo(iso) {
@@ -91,6 +92,22 @@ export default function Dashboard() {
           <Sparkles size={16} className="text-green-500 shrink-0" />
           <p className="text-xs text-green-500">{t("noSalesToday")}</p>
         </div>
+      )}
+
+      {isActive && (
+        <section aria-labelledby="business-tools-heading" className="mb-6">
+          <h2 id="business-tools-heading" className="font-display font-semibold text-green-700 mb-3">{t("businessTools")}</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {BUSINESS_TOOLS.map(({ to, key, icon: Icon }) => (
+              <Link key={to} to={to} className="card p-4 flex flex-col items-center gap-2 text-center hover:-translate-y-0.5 transition-transform">
+                <span className="w-11 h-11 rounded-xl bg-green-50 text-green-600 flex items-center justify-center">
+                  <Icon size={20} />
+                </span>
+                <span className="text-xs font-semibold text-green-700">{t(key)}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">

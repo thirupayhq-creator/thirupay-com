@@ -9,8 +9,13 @@ import { useToast } from "../context/ToastContext";
 // Public customer checkout page reached by scanning a merchant's STATIC QR:
 //   /pay?merchant=<merchant_id>
 // No merchant login required, no dashboard sidebar/navbar — this is a
-// standalone fintech-style checkout screen. The amount is entered here by
-// the customer; it is never encoded in the QR itself.
+// standalone fintech-style checkout screen. For the shop's STATIC QR the amount is
+// entered here by the customer.
+//
+// A Billing checkout instead opens  /pay?merchant=<id>&amount=<bill total>&ref=<payment ref>
+//   · amount → shown as fixed (the customer can't change what the bill asks for)
+//   · ref    → saved on the transaction so Billing can recognise the payment and
+//              finish that bill automatically.
 export default function PayMerchant() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -19,7 +24,13 @@ export default function PayMerchant() {
   const merchantId = searchParams.get("merchant");
   const merchant = merchantId ? db.getMerchantById(merchantId) : null;
 
-  const [amount, setAmount] = useState("");
+  // Only accept a well-formed, positive amount from the URL; anything else falls back to manual entry.
+  const presetRaw = searchParams.get("amount");
+  const presetAmount = presetRaw && /^\d+(\.\d{1,2})?$/.test(presetRaw) && Number(presetRaw) > 0 ? presetRaw : null;
+  const refRaw = searchParams.get("ref");
+  const paymentRef = refRaw && /^[\w-]{1,60}$/.test(refRaw) ? refRaw : null;
+
+  const [amount, setAmount] = useState(presetAmount || "");
   const [amountError, setAmountError] = useState("");
   const [selectedMode, setSelectedMode] = useState(null);
   const [status, setStatus] = useState("form"); // form | processing | success
@@ -61,6 +72,7 @@ export default function PayMerchant() {
         payment_mode: mode,
         status: "success",
         created_at: new Date().toISOString(),
+        ...(paymentRef ? { payment_ref: paymentRef } : {}),
       };
       db.addTxn(txn);
       db.addSettlement({
@@ -146,21 +158,32 @@ export default function PayMerchant() {
               </motion.div>
             ) : (
               <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <label className="block text-xs font-semibold text-green-500 mb-1.5 text-center">Enter Amount</label>
-                <div className="flex items-center justify-center gap-1 mb-1">
-                  <span className="text-2xl font-display font-bold text-green-700">₹</span>
-                  <input
-                    autoFocus
-                    inputMode="decimal"
-                    value={amount}
-                    onChange={(e) => {
-                      setAmount(e.target.value.replace(/[^\d.]/g, ""));
-                      if (amountError) setAmountError("");
-                    }}
-                    placeholder="0"
-                    className="text-3xl font-display font-bold text-green-700 text-center w-40 outline-none border-b-2 border-green-100 focus:border-green-500 bg-transparent"
-                  />
-                </div>
+                {presetAmount ? (
+                  <div className="text-center mb-1">
+                    <p className="block text-xs font-semibold text-green-500 mb-1.5">Amount to pay</p>
+                    <p className="text-3xl font-display font-bold text-green-700" aria-label={`Amount to pay ${displayAmount} rupees`}>₹{displayAmount}</p>
+                    <p className="text-[11px] text-green-300 mt-1">Set by {merchant.business_name} for your bill</p>
+                  </div>
+                ) : (
+                  <>
+                    <label htmlFor="pay-amount" className="block text-xs font-semibold text-green-500 mb-1.5 text-center">Enter Amount</label>
+                    <div className="flex items-center justify-center gap-1 mb-1">
+                      <span className="text-2xl font-display font-bold text-green-700">₹</span>
+                      <input
+                        id="pay-amount"
+                        autoFocus
+                        inputMode="decimal"
+                        value={amount}
+                        onChange={(e) => {
+                          setAmount(e.target.value.replace(/[^\d.]/g, ""));
+                          if (amountError) setAmountError("");
+                        }}
+                        placeholder="0"
+                        className="text-3xl font-display font-bold text-green-700 text-center w-40 outline-none border-b-2 border-green-100 focus:border-green-500 bg-transparent"
+                      />
+                    </div>
+                  </>
+                )}
                 {amountError && <p className="text-rose-600 text-xs font-medium text-center mb-3">{amountError}</p>}
                 {!amountError && <div className="mb-3" />}
 

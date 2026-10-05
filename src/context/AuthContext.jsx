@@ -41,15 +41,20 @@ export function AuthProvider({ children }) {
     return { ok: true, session: newSession };
   }, []);
 
-  const registerMerchant = useCallback((form) => {
+  // `kyc` is optional: the 3-stage registration wizard passes the KYC record so the
+  // account, merchant profile and KYC submission are created together (all "pending").
+  const registerMerchant = useCallback((form, kyc) => {
     if (db.isEmailTaken(form.email)) return { ok: false, error: "This email is already registered." };
     if (!form.phoneVerified) return { ok: false, error: "Please verify your mobile number with OTP before continuing." };
 
     const userId = genId("u");
     const merchantId = genId("m");
+    let userAdded = false;
+    let merchantAdded = false;
 
     try {
       db.addUser({ id: userId, name: form.ownerName, email: form.email, phone: form.phone, role: "merchant", password: form.password });
+      userAdded = true;
 
       db.addMerchant({
         merchant_id: merchantId,
@@ -77,11 +82,17 @@ export function AuthProvider({ children }) {
         bank_verification_status: "pending",
         created_at: new Date().toISOString(),
       });
+      merchantAdded = true;
+
+      if (kyc) {
+        db.addKyc({ ...kyc, merchant_id: merchantId, verification_status: "pending" });
+      }
     } catch (err) {
-      // Roll back the partially-created user so the email isn't stuck as "already registered"
-      db.removeUser(userId);
+      // Roll back anything partially created so the email isn't stuck as "already registered"
+      if (merchantAdded) db.removeMerchant(merchantId);
+      if (userAdded) db.removeUser(userId);
       if (err.message === "STORAGE_QUOTA_EXCEEDED") {
-        return { ok: false, error: "Storage is full — please reduce the business photo size (try a smaller image)." };
+        return { ok: false, error: "Storage is full — try smaller files (or a smaller business photo) and submit again." };
       }
       return { ok: false, error: "Registration could not be saved, please try again." };
     }

@@ -44,14 +44,15 @@ export default function AdminLogin() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1.5">Email</label>
+              <label className="block text-xs font-semibold text-slate-500 mb-1.5">Email or username</label>
               <input
-                type="email"
+                type="text"
+                autoComplete="username"
                 required
                 autoFocus
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                placeholder="Enter your email"
+                placeholder="admin@thirupay.in"
                 className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-slate-500 focus:ring-2 focus:ring-slate-100 outline-none text-sm"
               />
             </div>
@@ -62,7 +63,7 @@ export default function AdminLogin() {
                 required
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-                placeholder="Enter your password"
+                placeholder="••••••••"
                 className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-slate-500 focus:ring-2 focus:ring-slate-100 outline-none text-sm"
               />
             </div>
@@ -87,4 +88,4 @@ export default function AdminLogin() {
       </motion.div>
     </div>
   );
-}
+}

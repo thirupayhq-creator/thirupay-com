@@ -23,17 +23,17 @@ import {
 } from "lucide-react";
 
 export const FEATURES = [
-  { icon: QrCode, title: "Instant QR Collection", desc: "Generate a QR in seconds — get paid the moment a customer scans, no hardware needed.", detail: "One static QR for your counter, printed once and reused for every sale. Every scan is tracked live on your dashboard, and money settles to your bank the next business day." },
-  { icon: Link2, title: "Payment Links", desc: "Share a link over WhatsApp or SMS for remote orders. No scan required.", detail: "Create a link for any amount, set an expiry, and send it over WhatsApp or SMS. Customers can pay from anywhere — perfect for phone orders and deliveries." },
-  { icon: Wallet, title: "Settlement Tracking", desc: "See exactly when every rupee lands in your bank account, from collection to payout.", detail: "Every collection shows a clear settlement date and status — pending or settled — so you always know what's in transit and what's already in your account." },
+  { icon: QrCode, title: "Instant QR Collection", desc: "Generate a QR in seconds — get paid the moment a customer scans, no hardware needed.", detail: "One static QR for your counter, printed once and reused for every sale. Every scan is tracked live on your dashboard, and money settles to your bank the next business day.", slug: "qr-collection" },
+  { icon: Link2, title: "Payment Links", desc: "Share a link over WhatsApp or SMS for remote orders. No scan required.", detail: "Create a link for any amount, set an expiry, and send it over WhatsApp or SMS. Customers can pay from anywhere — perfect for phone orders and deliveries.", slug: "payment-links" },
+  { icon: Wallet, title: "Settlement Tracking", desc: "See exactly when every rupee lands in your bank account, from collection to payout.", detail: "Every collection shows a clear settlement date and status — pending or settled — so you always know what's in transit and what's already in your account.", slug: "settlement-tracking" },
   { icon: ShieldCheck, title: "Admin-Verified Merchants", desc: "Every merchant is KYC-verified and approved before they can collect payments.", detail: "PAN and Aadhaar verification keeps the platform trustworthy for both merchants and their customers, with our admin team reviewing every account before activation." },
 ];
 
 export const SERVICES = [
-  { icon: Banknote, title: "Business Loans", desc: "Up to ₹2,00,000 with zero processing fees and no collateral — apply in minutes.", detail: "Request a loan directly from your merchant dashboard based on your collection history. No paperwork trips — our admin team reviews and disburses digitally." },
-  { icon: ShieldPlus, title: "Insurance", desc: "Business, device, health, motor & more — protect what matters, request in one tap.", detail: "Cover your shop, your soundbox or POS device, or your family's health — all requestable from the same dashboard you already use to collect payments." },
-  { icon: Volume2, title: "SoundBox", desc: "Instant voice alerts for every payment received, even without checking your phone.", detail: "A small speaker device that announces every payment out loud in Tamil or English, so you never have to stop and check your phone at the counter." },
-  { icon: Smartphone, title: "POS Devices", desc: "Accept card payments in-store with a POS terminal delivered to your doorstep.", detail: "For customers who prefer to tap or swipe a card, request a POS terminal and start accepting card payments alongside UPI." },
+  { icon: Banknote, title: "Business Loans", desc: "Up to ₹2,00,000 with zero processing fees and no collateral — apply in minutes.", detail: "Request a loan directly from your merchant dashboard based on your collection history. No paperwork trips — our admin team reviews and disburses digitally.", slug: "business-loans" },
+  { icon: ShieldPlus, title: "Insurance", desc: "Business, device, health, motor & more — protect what matters, request in one tap.", detail: "Cover your shop, your soundbox or POS device, or your family's health — all requestable from the same dashboard you already use to collect payments.", slug: "insurance" },
+  { icon: Volume2, title: "SoundBox", desc: "Instant voice alerts for every payment received, even without checking your phone.", detail: "A small speaker device that announces every payment out loud in Tamil or English, so you never have to stop and check your phone at the counter.", slug: "soundbox" },
+  { icon: Smartphone, title: "POS Devices", desc: "Accept card payments in-store with a POS terminal delivered to your doorstep.", detail: "For customers who prefer to tap or swipe a card, request a POS terminal and start accepting card payments alongside UPI.", slug: "pos-devices" },
 ];
 
 export const STEPS = [
@@ -67,18 +67,18 @@ export const NAV_PRODUCT_GROUPS = [
   {
     title: "Payments",
     items: [
-      { icon: QrCode, name: "QR Collection", desc: "Static QR for your counter", to: "/product#core-features" },
-      { icon: Link2, name: "Payment Links", desc: "Share over WhatsApp/SMS", to: "/product#core-features" },
-      { icon: Wallet, name: "Settlement Tracking", desc: "Know when money lands", to: "/product#core-features" },
+      { icon: QrCode, name: "QR Collection", desc: "Static QR for your counter", to: "/product/qr-collection" },
+      { icon: Link2, name: "Payment Links", desc: "Share over WhatsApp/SMS", to: "/product/payment-links" },
+      { icon: Wallet, name: "Settlement Tracking", desc: "Know when money lands", to: "/product/settlement-tracking" },
     ],
   },
   {
     title: "Grow your business",
     items: [
-      { icon: Banknote, name: "Business Loans", desc: "Up to ₹2,00,000", to: "/product#beyond-payments" },
-      { icon: ShieldPlus, name: "Insurance", desc: "Business, device & more", to: "/product#beyond-payments" },
-      { icon: Volume2, name: "SoundBox", desc: "Voice payment alerts", to: "/product#beyond-payments" },
-      { icon: Smartphone, name: "POS Devices", desc: "Accept card payments", to: "/product#beyond-payments" },
+      { icon: Banknote, name: "Business Loans", desc: "Up to ₹2,00,000", to: "/product/business-loans" },
+      { icon: ShieldPlus, name: "Insurance", desc: "Business, device & more", to: "/product/insurance" },
+      { icon: Volume2, name: "SoundBox", desc: "Voice payment alerts", to: "/product/soundbox" },
+      { icon: Smartphone, name: "POS Devices", desc: "Accept card payments", to: "/product/pos-devices" },
     ],
   },
 ];

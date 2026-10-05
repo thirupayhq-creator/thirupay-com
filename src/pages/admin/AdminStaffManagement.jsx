@@ -425,6 +425,9 @@ export default function AdminStaffManagement() {
                   <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} className="w-full px-3 py-2.5 rounded-lg border border-green-100 text-sm bg-white outline-none">
                     {ADMIN_ROLES.map((r) => <option key={r}>{r}</option>)}
                   </select>
+                  {form.role === "Super Admin" && (
+                    <p className="text-[11px] text-amber-700 mt-1.5">Full platform access — including Staff Management and creating other admins.</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-green-500 mb-1.5">Branch</label>

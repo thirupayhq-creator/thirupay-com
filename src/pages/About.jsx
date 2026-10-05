@@ -194,31 +194,31 @@ export default function About() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-20">
         <motion.div
           {...fadeUp}
-          className="bg-green-900 rounded-[28px] px-8 py-14 sm:px-14 sm:py-16 grid grid-cols-1 lg:grid-cols-[1.15fr_1px_1fr] gap-10 lg:gap-0 items-center"
+          className="bg-white border border-green-100 shadow-card rounded-[28px] px-8 py-14 sm:px-14 sm:py-16 grid grid-cols-1 lg:grid-cols-[1.15fr_1px_1fr] gap-10 lg:gap-0 items-center"
         >
           {/* Founder */}
           <div className="flex flex-col sm:flex-row gap-8 sm:gap-9 items-center sm:items-center lg:pr-12">
-            <div className="w-32 h-32 sm:w-[168px] sm:h-[168px] rounded-full overflow-hidden border-4 border-white/10 mx-auto sm:mx-0 shrink-0">
+            <div className="w-40 sm:w-48 mx-auto sm:mx-0 shrink-0">
               <img
                 src={sirPhoto}
                 alt="Jayakrishnan J"
-                className="w-full h-full object-cover object-[50%_30%] scale-[1.15]"
+                className="w-full h-auto rounded-[14px]"
               />
             </div>
             <div className="text-center sm:text-left">
-              <p className="text-orange-400 text-xs font-semibold tracking-wide mb-3">Meet the founder</p>
-              <h2 className="font-display font-bold text-2xl sm:text-[1.85rem] text-white mb-4 leading-[1.2] max-w-[420px]">
+              <p className="text-orange-500 text-xs font-semibold tracking-wide mb-3">Meet the founder</p>
+              <h2 className="font-display font-bold text-2xl sm:text-[1.85rem] text-green-800 mb-4 leading-[1.2] max-w-[420px]">
                 Building financial tools with merchants at the center
               </h2>
-              <p className="text-green-100 text-sm leading-relaxed max-w-[400px] mb-5">
+              <p className="text-green-500 text-sm leading-relaxed max-w-[400px] mb-5">
                 ThiruPay was built to simplify financial technology for merchants and businesses, making payments and financial
                 services more accessible, reliable, and easy to use.
               </p>
-              <p className="font-display font-semibold text-white text-base">Jayakrishnan J</p>
-              <p className="text-xs text-blue-400 mt-0.5">Founder &amp; CEO, ThiruPay</p>
+              <p className="font-display font-semibold text-green-800 text-base">Jayakrishnan J</p>
+              <p className="text-xs text-blue-600 mt-0.5">Founder &amp; CEO, ThiruPay</p>
               <a
                 href="mailto:jayakrishnan@hrify.co.in"
-                className="text-xs text-green-300 hover:text-green-200 transition-colors mt-1 inline-block"
+                className="text-xs text-green-600 hover:text-green-800 transition-colors mt-1 inline-block"
               >
                 jayakrishnan@hrify.co.in
               </a>
@@ -226,31 +226,31 @@ export default function About() {
           </div>
 
           {/* Divider */}
-          <div className="hidden lg:block bg-white/10 w-px self-stretch" />
-          <div className="lg:hidden h-px bg-white/10 w-full" />
+          <div className="hidden lg:block bg-green-100 w-px self-stretch" />
+          <div className="lg:hidden h-px bg-green-100 w-full" />
 
           {/* Vision + Mission */}
           <div className="flex flex-col gap-4 lg:pl-12 w-full">
-            <div className="bg-white/5 rounded-2xl p-5 sm:p-6 flex items-center gap-4">
+            <div className="bg-blue-50 rounded-2xl p-5 sm:p-6 flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0">
                 <Eye size={20} />
               </div>
               <div>
-                <p className="font-display font-semibold text-blue-400 text-sm mb-1">Our Vision</p>
-                <p className="text-green-100 text-[13px] leading-relaxed">
+                <p className="font-display font-semibold text-blue-700 text-sm mb-1">Our Vision</p>
+                <p className="text-green-600 text-[13px] leading-relaxed">
                   To empower every merchant in India with easy, trusted, and innovative financial solutions that drive growth and
                   financial freedom.
                 </p>
               </div>
             </div>
 
-            <div className="bg-white/5 rounded-2xl p-5 sm:p-6 flex items-center gap-4">
+            <div className="bg-green-50 rounded-2xl p-5 sm:p-6 flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center shrink-0">
                 <Target size={20} />
               </div>
               <div>
-                <p className="font-display font-semibold text-green-400 text-sm mb-1">Our Mission</p>
-                <p className="text-green-100 text-[13px] leading-relaxed">
+                <p className="font-display font-semibold text-green-700 text-sm mb-1">Our Mission</p>
+                <p className="text-green-600 text-[13px] leading-relaxed">
                   To build simple and smart financial tools that help merchants collect payments, access credit, manage business,
                   and grow with confidence.
                 </p>

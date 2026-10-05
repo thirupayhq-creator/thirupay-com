@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogIn, Zap, X, KeyRound, CheckCircle2, ShieldCheck } from "lucide-react";
+import { LogIn, X, KeyRound, CheckCircle2, ShieldCheck } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { db } from "../../data/mockData";
 
@@ -21,10 +21,6 @@ export default function Login() {
       return;
     }
     navigate(res.session.role === "admin" ? "/admin" : "/merchant");
-  };
-
-  const fillDemo = () => {
-    setForm({ email: "selvi@shop.com", password: "merchant123" });
   };
 
   return (
@@ -81,19 +77,6 @@ export default function Login() {
               <LogIn size={16} /> Login
             </button>
           </form>
-
-          <div className="flex items-center gap-2 my-5">
-            <div className="h-px bg-green-100 flex-1" />
-            <span className="text-[11px] text-green-300 font-medium">DEMO ACCESS</span>
-            <div className="h-px bg-green-100 flex-1" />
-          </div>
-
-          <button
-            onClick={fillDemo}
-            className="w-full flex items-center justify-center gap-1.5 text-xs font-semibold py-2 rounded-lg border border-green-100 text-green-600 hover:bg-green-50 transition-colors"
-          >
-            <Zap size={13} /> Merchant demo
-          </button>
 
           <p className="text-center text-sm text-green-400 mt-6">
             New merchant?{" "}
