@@ -66,27 +66,28 @@ export default function PaymentLinkShowcase() {
 
       {/* Main Container Card */}
       <motion.div
-        className="relative bg-white rounded-3xl p-5 border border-slate-200/90 shadow-2xl overflow-hidden min-h-[460px] flex flex-col justify-between"
+        className="relative bg-white rounded-3xl p-5 border border-slate-200/90 shadow-2xl overflow-hidden min-h-[450px] flex flex-col justify-between"
         whileHover={{ y: -3, transition: { duration: 0.3 } }}
       >
         {activeTab === "merchant" ? (
           /* Merchant Generation View */
-          <div className="space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center font-bold">
-                  <Link2 size={16} />
-                </div>
-                <div>
-                  <h4 className="font-display font-bold text-slate-900 text-sm">
-                    Create Instant Payment Link
-                  </h4>
-                  <p className="text-[10px] text-slate-400">Share via WhatsApp, SMS or Email</p>
-                </div>
+          <div className="space-y-3.5">
+            <div className="pb-3 border-b border-slate-100">
+              {/* Brand row: wordmark + MDR pill */}
+              <div className="flex items-center justify-between mb-2">
+                <img
+                  src="/brand/logo-full.png"
+                  alt="ThiruPay"
+                  className="h-7 w-auto object-contain"
+                />
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  0% MDR
+                </span>
               </div>
-              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                0% MDR
-              </span>
+              <h4 className="font-display font-bold text-slate-900 text-sm">
+                Create Instant Payment Link
+              </h4>
+              <p className="text-[10px] text-slate-400">Share via WhatsApp, SMS or Email</p>
             </div>
 
             {/* Inputs Form */}
@@ -194,7 +195,7 @@ export default function PaymentLinkShowcase() {
                 </div>
               </div>
               <span className="text-[9px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
-                Encrypted
+                Secure Link
               </span>
             </div>
 
@@ -225,9 +226,16 @@ export default function PaymentLinkShowcase() {
             {/* Simulated Checkout Drawer */}
             <div className="bg-slate-50 rounded-2xl p-3 border border-slate-200 space-y-2.5">
               <div className="flex items-center justify-between text-[11px]">
-                <span className="font-bold text-slate-800">ThiruPay Instant Checkout</span>
+                <span className="font-bold text-slate-800 flex items-center gap-2">
+                  <img
+                    src="/brand/logo-full.png"
+                    alt="ThiruPay"
+                    className="h-5 w-auto object-contain"
+                  />
+                  <span className="text-slate-500 font-semibold">Instant Checkout</span>
+                </span>
                 <span className="flex items-center gap-1 text-[9px] font-semibold text-emerald-600">
-                  <ShieldCheck size={11} /> 100% Safe
+                  <ShieldCheck size={11} /> Secure Checkout
                 </span>
               </div>
 

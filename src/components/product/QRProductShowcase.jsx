@@ -5,17 +5,29 @@ import {
   CheckCircle2,
   Volume2,
   RefreshCw,
-  Sparkles,
   Smartphone,
-  ShieldCheck,
+  BadgeCheck,
+  MapPin,
+  Copy,
+  Check,
   Zap,
 } from "lucide-react";
+
+const UPI_ID = "selvi@thirupay";
+
+const UPI_APPS = [
+  { name: "GPay", short: "G", bg: "bg-white", text: "text-sky-600", logo: "/payment-logos/google-pay-logo.png" },
+  { name: "PhonePe", short: "Pe", bg: "bg-white", text: "text-purple-700", logo: "/payment-logos/phonepe-logo.png" },
+  { name: "Paytm", short: "Pt", bg: "bg-white", text: "text-sky-700", logo: "/payment-logos/paytm-logo.png" },
+  { name: "BHIM", short: "B", bg: "bg-white", text: "text-emerald-700", logo: "/payment-logos/bhim-logo.png" },
+];
 
 export default function QRProductShowcase() {
   const [mode, setMode] = useState("static"); // "static" | "dynamic"
   const [amount, setAmount] = useState("450");
   const [simulating, setSimulating] = useState(false);
   const [paid, setPaid] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const qrValue =
     mode === "static"
@@ -32,19 +44,29 @@ export default function QRProductShowcase() {
     }, 1200);
   };
 
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(UPI_ID);
+    } catch {
+      // clipboard blocked (http / old browser) - still show feedback
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  };
+
   return (
-    <div className="relative mx-auto w-full max-w-[420px] lg:max-w-[440px]">
+    <div className="relative mx-auto w-full max-w-[360px] lg:max-w-[380px]">
       {/* Ambient background glow */}
       <div className="absolute inset-0 bg-gradient-to-tr from-orange-400/20 via-sky-400/15 to-transparent blur-3xl -z-10 pointer-events-none rounded-3xl" />
 
       {/* Control Switcher Bar */}
-      <div className="flex items-center justify-between bg-white/90 backdrop-blur-md p-1.5 rounded-2xl border border-slate-200/90 shadow-sm mb-4">
+      <div className="flex items-center justify-between bg-white/90 backdrop-blur-md p-1 rounded-xl border border-slate-200/90 shadow-sm mb-3">
         <button
           onClick={() => {
             setMode("static");
             setPaid(false);
           }}
-          className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition-all ${
+          className={`flex-1 py-1.5 px-3 rounded-lg text-[11px] font-bold transition-all ${
             mode === "static"
               ? "bg-[#0B2A4A] text-white shadow-sm"
               : "text-slate-600 hover:text-slate-900"
@@ -57,7 +79,7 @@ export default function QRProductShowcase() {
             setMode("dynamic");
             setPaid(false);
           }}
-          className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition-all ${
+          className={`flex-1 py-1.5 px-3 rounded-lg text-[11px] font-bold transition-all ${
             mode === "dynamic"
               ? "bg-[#0B2A4A] text-white shadow-sm"
               : "text-slate-600 hover:text-slate-900"
@@ -74,9 +96,9 @@ export default function QRProductShowcase() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden mb-3"
+            className="overflow-hidden mb-2"
           >
-            <div className="bg-orange-50/90 border border-orange-200 rounded-xl p-2.5 flex items-center justify-between gap-3">
+            <div className="bg-orange-50/90 border border-orange-200 rounded-xl p-2 flex items-center justify-between gap-2.5">
               <span className="text-[11px] font-semibold text-orange-900 shrink-0">
                 Bill Amount (₹):
               </span>
@@ -100,108 +122,155 @@ export default function QRProductShowcase() {
         )}
       </AnimatePresence>
 
-      {/* Realistic Acrylic QR Standee Mockup */}
+      {/* QR Standee */}
       <motion.div
-        className="relative bg-white rounded-3xl p-5 border border-slate-200/90 shadow-2xl overflow-hidden"
-        whileHover={{ y: -4, transition: { duration: 0.3 } }}
+        className="relative bg-white rounded-3xl border border-slate-200/90 shadow-2xl overflow-hidden"
+        whileHover={{ y: -3, transition: { duration: 0.3 } }}
       >
-        {/* Acrylic Top Glass Reflection */}
+        {/* Acrylic glass reflection */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-white/40 z-20" />
 
-        {/* Standee Header */}
-        <div className="text-center pb-4 border-b border-slate-100 relative z-10">
-          <div className="inline-flex items-center gap-1.5 bg-[#0B2A4A] text-white px-3 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase shadow-xs mb-2">
-            <Sparkles size={11} className="text-orange-400" /> ThiruPay Merchant
-          </div>
-          <h3 className="font-display font-bold text-slate-900 text-sm sm:text-base leading-tight">
-            Selvi Groceries &amp; Supermarket
-          </h3>
-          <p className="text-[10px] text-slate-500 mt-0.5">
-            UPI ID: <span className="font-mono text-slate-700">selvi@thirupay</span> • Tiruvannamalai
-          </p>
-        </div>
-
-        {/* QR Code Presentation Box */}
-        <div className="relative my-4 flex flex-col items-center justify-center p-4 bg-slate-50/80 rounded-2xl border border-slate-100">
-          {/* Scan Corner Markers */}
-          <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-orange-500 rounded-tl" />
-          <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-orange-500 rounded-tr" />
-          <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-orange-500 rounded-bl" />
-          <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-orange-500 rounded-br" />
-
-          {/* QR Code Canvas */}
-          <div className="bg-white p-2.5 rounded-xl shadow-md border border-slate-100 relative">
-            <QRCodeCanvas
-              value={qrValue}
-              size={168}
-              level="H"
-              fgColor="#0B2A4A"
-              bgColor="#ffffff"
+        <div className="relative z-10 px-4 pt-3 pb-3">
+          {/* Header: logo + verified + merchant */}
+          <div className="text-center pb-2 border-b border-slate-100">
+            <img
+              src="/brand/logo-full.png"
+              alt="ThiruPay"
+              className="h-7 w-auto mx-auto mb-1.5 object-contain"
             />
-            {/* Center ThiruPay Logo Emblem */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-8 h-8 rounded-full bg-[#0B2A4A] border-2 border-white flex items-center justify-center text-white text-[9px] font-extrabold shadow-md">
-                ₹
+            <div className="inline-flex items-center gap-1 bg-emerald-500 text-white px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wide uppercase shadow-sm mb-1.5">
+              <BadgeCheck size={11} />
+              Verified Merchant
+            </div>
+            <h3 className="font-display font-bold text-slate-900 text-sm leading-tight">
+              Selvi Groceries &amp; Supermarket
+            </h3>
+            <p className="text-[10px] text-slate-500 mt-0.5 flex items-center justify-center gap-1">
+              <MapPin size={10} className="text-orange-500" />
+              Tiruvannamalai
+            </p>
+          </div>
+
+          {/* QR box */}
+          <div className="relative mt-3 flex flex-col items-center">
+            <div className="relative bg-white p-2 rounded-xl shadow-md border border-slate-100">
+              <QRCodeCanvas
+                value={qrValue}
+                size={136}
+                level="H"
+                fgColor="#0B2A4A"
+                bgColor="#ffffff"
+              />
+              {/* Center ThiruPay logo badge */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center shadow-md ring-[3px] ring-white">
+                  <img
+                    src="/brand/logo-icon.png"
+                    alt="ThiruPay"
+                    className="w-6 h-6 object-contain"
+                  />
+                </div>
               </div>
             </div>
+
+            {/* QR type pill */}
+            <span className="-mt-2 relative z-10 bg-sky-50 border border-sky-100 text-sky-700 text-[9px] font-bold tracking-wide uppercase px-2.5 py-0.5 rounded-full">
+              {mode === "static" ? "Static UPI QR" : "Dynamic Bill QR"}
+            </span>
+
+            {/* Scan & Pay */}
+            <h4 className="mt-1.5 font-display font-extrabold text-[#0B2A4A] text-base leading-tight">
+              Scan &amp; Pay
+            </h4>
+
+            {mode === "static" ? (
+              <p className="text-[10px] text-slate-500 text-center">
+                Enter the amount in your UPI app
+              </p>
+            ) : (
+              <div className="mt-0.5 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full text-emerald-800 text-[10px] font-bold flex items-center gap-1">
+                <Zap size={10} className="text-emerald-600 fill-emerald-600" />
+                Pay Exact Amount: ₹{amount || "0"}
+              </div>
+            )}
           </div>
 
-          {/* Dynamic Amount Badge */}
-          {mode === "dynamic" && (
-            <div className="mt-3 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full text-emerald-800 text-[11px] font-bold flex items-center gap-1 shadow-xs">
-              <Zap size={11} className="text-emerald-600 fill-emerald-600" />
-              Pay Exact Amount: ₹{amount || "0"}
-            </div>
-          )}
+          {/* UPI apps strip */}
+          <div className="mt-2.5 flex items-start justify-center gap-2">
+            {UPI_APPS.map((app) => (
+              <div key={app.name} className="flex flex-col items-center gap-0.5 w-14">
+                <div
+                  className={`w-14 h-9 rounded-lg ${app.bg} shadow-sm border border-slate-100 flex items-center justify-center overflow-hidden px-1.5 py-1`}
+                >
+                  {app.logo ? (
+                    <img
+                      src={app.logo}
+                      alt={app.name}
+                      className="w-full h-full object-contain"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <span className={`text-[10px] font-extrabold ${app.text}`}>
+                      {app.short}
+                    </span>
+                  )}
+                </div>
+                <span className="text-[8.5px] font-medium text-slate-600 text-center leading-tight">
+                  {app.name}
+                </span>
+              </div>
+            ))}
 
-          {mode === "static" && (
-            <p className="mt-2.5 text-[10px] text-slate-500 font-medium">
-              Scan &amp; Enter Any Amount
+            <div className="flex flex-col items-center gap-0.5 w-14">
+              <div className="w-14 h-9 rounded-lg bg-sky-50 border border-sky-100 flex items-center justify-center">
+                <span className="text-[10px] font-extrabold text-[#0B2A4A]">+150</span>
+              </div>
+              <span className="text-[8.5px] font-medium text-slate-600 text-center leading-tight">
+                more
+              </span>
+            </div>
+          </div>
+
+          {/* UPI ID row (label + pill in one line) */}
+          <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-center gap-2">
+            <span className="text-[10px] text-slate-400 font-medium">UPI ID</span>
+            <button
+              onClick={handleCopy}
+              className="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 transition-colors rounded-full px-3 py-1"
+              aria-label="Copy UPI ID"
+            >
+              <span className="font-semibold text-xs text-[#0B2A4A]">{UPI_ID}</span>
+              {copied ? (
+                <Check size={13} className="text-emerald-600" />
+              ) : (
+                <Copy size={13} className="text-sky-700" />
+              )}
+            </button>
+          </div>
+          {copied && (
+            <p className="text-[9px] text-emerald-600 font-medium text-center mt-0.5">
+              Copied!
             </p>
           )}
         </div>
 
-        {/* Accepted UPI Apps Strip */}
-        <div className="pt-3 border-t border-slate-100 text-center relative z-10">
-          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
-            Accepted with any UPI App (0% MDR)
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-2 text-[10px] font-bold text-slate-700">
-            <span className="bg-slate-100 hover:bg-slate-200 px-2 py-0.5 rounded-md transition-colors">
-              Google Pay
-            </span>
-            <span className="bg-purple-50 text-purple-700 px-2 py-0.5 rounded-md">
-              PhonePe
-            </span>
-            <span className="bg-sky-50 text-sky-700 px-2 py-0.5 rounded-md">
-              Paytm
-            </span>
-            <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-md">
-              BHIM UPI
-            </span>
-            <span className="bg-amber-50 text-amber-800 px-2 py-0.5 rounded-md">
-              Cred UPI
-            </span>
-          </div>
-        </div>
-
-        {/* Acrylic Base Stand Illusion */}
-        <div className="mt-4 pt-2 flex items-center justify-center gap-6 text-[9px] text-slate-400 border-t border-dashed border-slate-200">
-          <span className="flex items-center gap-1">
-            <ShieldCheck size={11} className="text-emerald-500" /> NPCI Certified
+        {/* Bottom navy bar */}
+        <div className="relative z-10 bg-[#0B2A4A] px-4 py-2 flex items-center justify-between">
+          <span className="text-[10px] font-medium text-white">
+            Accept payments from 150+ UPI apps
           </span>
-          <span className="flex items-center gap-1">
-            <Zap size={11} className="text-orange-500" /> Instant SoundBox Chime
+          <span className="text-white font-extrabold italic tracking-tight text-sm">
+            UPI
           </span>
         </div>
       </motion.div>
 
       {/* Simulation Action Bar */}
-      <div className="mt-3 flex items-center justify-between gap-3">
+      <div className="mt-2.5 flex items-center justify-between gap-3">
         <button
           onClick={handleSimulatePayment}
           disabled={simulating}
-          className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow-md shadow-orange-500/25 transition-all disabled:opacity-50"
+          className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-2 px-4 rounded-xl text-[11px] shadow-md shadow-orange-500/25 transition-all disabled:opacity-50"
         >
           {simulating ? (
             <>

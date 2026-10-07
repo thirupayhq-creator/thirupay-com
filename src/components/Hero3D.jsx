@@ -40,7 +40,7 @@ export default function Hero3D() {
         <div className="absolute -right-[7px] top-24 w-[2px] h-12 bg-slate-700 rounded-r" />
 
         {/* Screen Display Bezel */}
-        <div className="relative rounded-[32px] sm:rounded-[35px] overflow-hidden bg-[#F6F8FB] border border-slate-800/80 shadow-inner flex flex-col h-[460px] sm:h-[485px]">
+        <div className="relative rounded-[32px] sm:rounded-[35px] overflow-hidden bg-[#F6F8FB] border border-slate-800/80 shadow-inner flex flex-col h-[485px] sm:h-[510px]">
           {/* Glass Glare Reflection Overlay */}
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/20 z-30" />
 
@@ -70,24 +70,34 @@ export default function Hero3D() {
             </div>
           </div>
 
-          {/* App Header (Merchant Shop Profile) */}
-          <div className="bg-[#071D34] px-3 pb-2.5 pt-1 text-white border-b border-white/10">
+          {/* App Header */}
+          <div className="bg-[#071D34] px-3 pb-2.5 pt-1 text-white border-b border-white/10 space-y-2">
+            {/* Brand row: full ThiruPay logo on white pill + bell */}
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center text-white font-bold text-[10px] shadow-sm">
-                  S
-                </div>
-                <div>
-                  <div className="flex items-center gap-1">
-                    <p className="text-[11px] font-bold leading-tight">Selvi Groceries</p>
-                    <CheckCircle2 size={10} className="text-emerald-400 fill-emerald-400/20" />
-                  </div>
-                  <p className="text-[9px] text-slate-400 leading-tight">ID: TP-84920 • Active</p>
-                </div>
+              <div className="bg-white rounded-full px-2.5 py-1 shadow-sm flex items-center">
+                <img
+                  src="/brand/logo-full.png"
+                  alt="ThiruPay"
+                  className="h-5 w-auto object-contain"
+                />
               </div>
               <div className="relative w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-slate-300">
                 <Bell size={11} />
                 <span className="absolute top-1 right-1 w-1 h-1 bg-orange-500 rounded-full" />
+              </div>
+            </div>
+
+            {/* Merchant Shop Profile */}
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center text-white font-bold text-[10px] shadow-sm">
+                S
+              </div>
+              <div>
+                <div className="flex items-center gap-1">
+                  <p className="text-[11px] font-bold leading-tight">Selvi Groceries</p>
+                  <CheckCircle2 size={10} className="text-emerald-400 fill-emerald-400/20" />
+                </div>
+                <p className="text-[9px] text-slate-400 leading-tight">ID: TP-84920 • Active</p>
               </div>
             </div>
           </div>
@@ -219,12 +229,12 @@ export default function Hero3D() {
 
       {/* Floating Widget 1: ThiruPay SoundBox Alert (Bottom Right) */}
       <motion.div
-        className="hidden sm:block absolute -right-4 sm:-right-8 lg:-right-10 bottom-8 sm:bottom-12 w-36 sm:w-40 rounded-xl border border-orange-200 bg-white/95 backdrop-blur-md p-2.5 shadow-xl z-30"
+        className="hidden sm:block absolute -right-2 lg:-right-6 bottom-8 sm:bottom-12 w-36 sm:w-40 rounded-xl border border-orange-200 bg-white/95 backdrop-blur-md p-2.5 shadow-xl z-30"
         initial={{ opacity: 0, x: 20, y: 10 }}
         animate={{ opacity: 1, x: 0, y: 0 }}
         transition={{ duration: 0.7, delay: 0.3 }}
         whileHover={{ y: -3, scale: 1.03 }}
-        style={{ transform: "perspective(800px) rotateY(-6deg)" }}
+        style={{ rotateY: -6, z: 80 }}
       >
         <div className="flex items-center gap-1.5 mb-1">
           <div className="w-5 h-5 rounded-md bg-orange-500 text-white flex items-center justify-center shadow-xs">
@@ -259,12 +269,12 @@ export default function Hero3D() {
 
       {/* Floating Widget 2: Bank Settlement Verification (Top Left) */}
       <motion.div
-        className="hidden sm:block absolute -left-4 sm:-left-8 lg:-left-12 -top-2 sm:top-2 w-36 sm:w-40 rounded-xl border border-sky-100 bg-white/95 backdrop-blur-md p-2.5 shadow-xl z-30"
+        className="hidden sm:block absolute -left-4 sm:-left-10 lg:-left-16 -top-6 sm:-top-4 w-36 sm:w-40 rounded-xl border border-sky-100 bg-white/95 backdrop-blur-md p-2.5 shadow-xl z-30"
         initial={{ opacity: 0, x: -20, y: -10 }}
         animate={{ opacity: 1, x: 0, y: 0 }}
         transition={{ duration: 0.7, delay: 0.2 }}
         whileHover={{ y: -3, scale: 1.03 }}
-        style={{ transform: "perspective(800px) rotateY(6deg)" }}
+        style={{ rotateY: 6, z: 80 }}
       >
         <div className="flex items-center gap-1.5">
           <div className="w-5 h-5 rounded-md bg-[#0B2A4A] text-white flex items-center justify-center shadow-xs">

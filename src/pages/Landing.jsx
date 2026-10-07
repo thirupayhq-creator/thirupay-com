@@ -8,16 +8,17 @@ import {
   ShieldCheck,
   Lock,
   Building2,
-  Zap,
   Banknote,
   Volume2,
   Smartphone,
   ShieldPlus,
+  UserPlus,
+  QrCode,
+  Wallet,
 } from "lucide-react";
 import PublicNavbar from "../components/PublicNavbar";
 import PublicFooter from "../components/PublicFooter";
 import Hero3D from "../components/Hero3D";
-import HomeProductTabs from "../components/home/HomeProductTabs";
 
 const TRUST_POINTS = [
   "0% MDR on UPI Transfers",
@@ -100,7 +101,7 @@ export default function Landing() {
             {/* Live Status Pill */}
             <div className="inline-flex items-center gap-2 bg-green-50 border border-green-200/80 text-green-800 text-[11px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full mb-6 shadow-xs">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>ThiruPay 2.0 • Unified Merchant Platform</span>
+              <span>Unified Merchant Platform</span>
             </div>
 
             <h1 className="font-display font-extrabold text-4xl sm:text-5xl lg:text-[3.25rem] leading-[1.08] text-green-950 mb-5 tracking-tight">
@@ -121,12 +122,6 @@ export default function Landing() {
               >
                 Open Free Merchant Account <ArrowRight size={16} />
               </Link>
-              <a
-                href="#solutions"
-                className="flex items-center gap-2 border-2 border-green-200 hover:bg-green-50 text-green-800 font-bold px-6 py-3.5 rounded-xl text-sm transition-colors"
-              >
-                Explore Live Demos
-              </a>
             </div>
 
             {/* Trust points */}
@@ -190,21 +185,63 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Core Solutions Interactive Tabs */}
-      <section id="solutions" className="max-w-6xl mx-auto px-6 py-20 scroll-mt-20">
+      {/* How It Works */}
+      <section id="how-it-works" className="max-w-6xl mx-auto px-6 py-20 scroll-mt-20">
         <div className="text-center max-w-2xl mx-auto mb-14">
           <p className="text-orange-600 text-xs font-bold uppercase tracking-wider mb-2">
-            Core Merchant Suite
+            How It Works
           </p>
           <h2 className="font-display font-extrabold text-3xl sm:text-4xl text-green-950">
-            Everything your counter needs on one platform
+            Start collecting payments in 3 simple steps
           </h2>
           <p className="text-slate-600 text-sm sm:text-base mt-3">
-            Switch between tools below to preview how ThiruPay powers payment collections from your counter to your bank.
+            From sign-up to your first bank payout, ThiruPay keeps everything simple for your counter.
           </p>
         </div>
 
-        <HomeProductTabs />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            {
+              icon: UserPlus,
+              step: "01",
+              title: "Register in minutes",
+              desc: "Create your merchant account with a quick digital KYC. No paperwork, no setup fees.",
+              color: "text-blue-600 bg-blue-50 border-blue-200",
+            },
+            {
+              icon: QrCode,
+              step: "02",
+              title: "Get your QR & SoundBox",
+              desc: "Place your ThiruPay QR at the counter and accept UPI from every app with 0% MDR.",
+              color: "text-orange-600 bg-orange-50 border-orange-200",
+            },
+            {
+              icon: Wallet,
+              step: "03",
+              title: "Receive T+1 payouts",
+              desc: "Collections reach your bank account the next morning with a Bank UTR for every settlement.",
+              color: "text-emerald-600 bg-emerald-50 border-emerald-200",
+            },
+          ].map(({ icon: Icon, step, title, desc, color }, idx) => (
+            <motion.div
+              key={step}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.3, delay: idx * 0.1 }}
+              className="bg-white rounded-3xl p-7 border border-slate-200/90 shadow-sm hover:shadow-lg transition-shadow"
+            >
+              <div className="flex items-center justify-between mb-5">
+                <div className={`w-12 h-12 rounded-2xl ${color} border flex items-center justify-center`}>
+                  <Icon size={22} />
+                </div>
+                <span className="font-display font-extrabold text-3xl text-slate-200">{step}</span>
+              </div>
+              <h3 className="font-display font-bold text-slate-900 text-lg mb-2">{title}</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">{desc}</p>
+            </motion.div>
+          ))}
+        </div>
       </section>
 
       {/* Numbers That Matter (Fintech Statistics) */}
@@ -468,37 +505,37 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Bank-Grade Security & RBI Compliance */}
-      <section className="bg-[#071D34] text-white py-16">
+      {/* Security Strip */}
+      <section className="bg-[#071D34] text-white py-14">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center max-w-xl mx-auto mb-12">
-            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-orange-400 uppercase tracking-widest bg-white/10 px-3.5 py-1.5 rounded-full mb-3">
-              <ShieldCheck size={14} /> Bank-Grade Security Architecture
+          <div className="text-center max-w-xl mx-auto mb-10">
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-orange-400 uppercase tracking-widest bg-white/10 px-3 py-1 rounded-full mb-3">
+              <ShieldCheck size={14} /> Security
             </span>
             <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">
-              Every single rupee protected by banking security
+              Security is built into everything we do
             </h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div className="bg-white/5 border border-white/10 p-5 rounded-2xl">
               <Lock size={22} className="text-orange-400 mx-auto mb-2" />
-              <p className="font-bold text-sm text-white">256-Bit SSL</p>
-              <p className="text-[11px] text-slate-400 mt-1">End-to-end encrypted payload</p>
+              <p className="font-bold text-sm text-white">Secure Connections</p>
+              <p className="text-[11px] text-slate-400 mt-1">Data protected with encryption in transit</p>
             </div>
             <div className="bg-white/5 border border-white/10 p-5 rounded-2xl">
-              <Building2 size={22} className="text-emerald-400 mx-auto mb-2" />
-              <p className="font-bold text-sm text-white">NPCI Certified</p>
-              <p className="text-[11px] text-slate-400 mt-1">Official UPI 2.0 network standards</p>
+              <CheckCircle2 size={22} className="text-emerald-400 mx-auto mb-2" />
+              <p className="font-bold text-sm text-white">Every Payment Tracked</p>
+              <p className="text-[11px] text-slate-400 mt-1">Each transaction recorded with live status</p>
             </div>
             <div className="bg-white/5 border border-white/10 p-5 rounded-2xl">
               <ShieldCheck size={22} className="text-sky-400 mx-auto mb-2" />
-              <p className="font-bold text-sm text-white">RBI Guidelines</p>
-              <p className="text-[11px] text-slate-400 mt-1">Compliant nodal settlement flow</p>
+              <p className="font-bold text-sm text-white">Verified Merchants</p>
+              <p className="text-[11px] text-slate-400 mt-1">KYC document check before account activation</p>
             </div>
             <div className="bg-white/5 border border-white/10 p-5 rounded-2xl">
-              <Zap size={22} className="text-amber-400 mx-auto mb-2" />
-              <p className="font-bold text-sm text-white">99.98% Gateway Uptime</p>
-              <p className="text-[11px] text-slate-400 mt-1">Zero downtime at peak billing hours</p>
+              <Building2 size={22} className="text-amber-400 mx-auto mb-2" />
+              <p className="font-bold text-sm text-white">Role-Based Access</p>
+              <p className="text-[11px] text-slate-400 mt-1">Separate access for owner, admin and staff</p>
             </div>
           </div>
         </div>

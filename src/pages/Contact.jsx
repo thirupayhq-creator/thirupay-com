@@ -1,156 +1,78 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Phone, MapPin, Clock, CheckCircle2, ChevronDown } from "lucide-react";
+import { Mail, Phone, MapPin, ChevronDown, Headphones, Briefcase, Landmark, TrendingUp } from "lucide-react";
 import PublicNavbar from "../components/PublicNavbar";
 import PublicFooter from "../components/PublicFooter";
-import { db, genId } from "../data/mockData";
 import { FAQS } from "../data/landingContent";
-import { useToast } from "../context/ToastContext";
+
+// Put your illustration paths in `img` (e.g. "/images/support.png").
+// If img is empty, a big icon tile is shown instead.
+const PHONE = "+91 9360921283";
+const INVESTOR_PHONE = "+91 8807880764";
+
+const CONTACT_CARDS = [
+  { title: "For Customer Support", icon: Headphones, img: "", rows: [{ icon: Phone, text: PHONE }, { icon: Mail, text: "support@thirupay.com" }] },
+  { title: "For Careers", icon: Briefcase, img: "", rows: [{ icon: Mail, text: "careers@thirupay.com" }] },
+  { title: "For Lending Support", icon: Landmark, img: "", rows: [{ icon: Phone, text: PHONE }, { icon: Mail, text: "lendingsupport@thirupay.com" }] },
+  { title: "For Investors", icon: TrendingUp, img: "", rows: [{ icon: Phone, text: INVESTOR_PHONE }, { icon: Mail, text: "jayakrishnan@thirupay.com" }] },
+];
 
 export default function Contact() {
-  const { showToast } = useToast();
-  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
-  const [sent, setSent] = useState(false);
-  const [error, setError] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
-
-  const update = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
-      setError("Please fill in your name, email, and message.");
-      return;
-    }
-    setError("");
-    db.addContactMessage({
-      message_id: genId("msg"),
-      ...form,
-      created_at: new Date().toISOString(),
-    });
-    setSent(true);
-    showToast({ title: "Message sent!", subtitle: "Our team will get back to you shortly.", type: "success" });
-    setForm({ name: "", email: "", phone: "", message: "" });
-  };
 
   return (
     <div className="min-h-screen bg-white">
       <PublicNavbar />
 
-      {/* Header */}
-      <section className="bg-soft relative overflow-hidden">
-        <div className="grid-fade absolute inset-0" />
-        <div className="relative z-10 max-w-3xl mx-auto px-6 pt-20 pb-16 text-center">
-          <p className="inline-block bg-green-50 text-green-700 text-xs font-semibold uppercase tracking-wide mb-4 px-3 py-1.5 rounded-full">Contact</p>
-          <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-green-900 mb-4 tracking-tight">We're <span className="text-gradient">here to help</span></h1>
-          <p className="text-green-600 text-sm sm:text-base leading-relaxed">
-            Questions about onboarding, settlements, or anything else — reach out in Tamil or English, whichever is easier.
+      {/* Hero + cards on one soft gradient (Ippopay style) */}
+      <section className="bg-gradient-to-b from-green-100 via-green-50 to-white">
+        <div className="max-w-5xl mx-auto px-6 pt-24 pb-10 text-center">
+          <h1 className="font-display font-extrabold text-5xl sm:text-6xl text-green-900 tracking-tight">Contact Us</h1>
+          <p className="text-green-700 text-sm sm:text-base mt-4">
+            Reach out in Tamil or English, whichever is easier.
           </p>
         </div>
-      </section>
 
-      <section className="max-w-6xl mx-auto px-6 py-20 grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-12">
-        {/* Contact details */}
-        <div className="space-y-5">
-          {[
-            { icon: Mail, label: "Email", value: "jayakrishnan@thirupay.com" },
-            { icon: Phone, label: "Phone", value: "+91 9360921283" },
-            {
-              icon: MapPin,
-              label: "Office",
-              value:
-                "Thirupay Technologies Private Limited, Annai Parvathi Nagar, opposite to Collectorate Office, Vengikkal, Tiruvannamalai - 606604",
-            },
-            { icon: Clock, label: "Support hours", value: "Mon – Sat, 9:00 AM – 7:00 PM" },
-          ].map((item) => (
-            <div key={item.label} className="card p-5 flex items-start gap-4">
-              <div className="w-10 h-10 rounded-lg bg-green-50 text-green-700 flex items-center justify-center shrink-0">
-                <item.icon size={18} />
+        <div className="max-w-5xl mx-auto px-6 pb-20 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {CONTACT_CARDS.map((c) => (
+            <div key={c.title} className="bg-white rounded-3xl shadow-sm p-6 flex gap-5 min-h-[230px]">
+              {/* Illustration */}
+              <div className="w-32 sm:w-40 shrink-0 flex items-center justify-center">
+                {c.img ? (
+                  <img src={c.img} alt={c.title} className="max-h-44 w-auto object-contain" />
+                ) : (
+                  <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-green-100 to-green-50 text-green-700 flex items-center justify-center">
+                    <c.icon size={44} strokeWidth={1.5} />
+                  </div>
+                )}
               </div>
-              <div>
-                <p className="text-xs text-green-600">{item.label}</p>
-                <p className="text-sm font-semibold text-green-700 leading-snug">{item.value}</p>
+
+              {/* Title + details */}
+              <div className="flex flex-col flex-1 min-w-0">
+                <h2 className="font-display text-xl sm:text-2xl font-semibold text-green-900 leading-tight">{c.title}</h2>
+                <div className="mt-auto pt-6 space-y-2">
+                  {c.rows.map((r) => (
+                    <div key={r.text} className="flex items-start gap-2.5">
+                      <span className="w-5 h-5 rounded-full bg-green-900 text-white flex items-center justify-center shrink-0 mt-0.5">
+                        <r.icon size={11} />
+                      </span>
+                      <span className="text-sm text-green-900 leading-snug break-words">{r.text}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           ))}
         </div>
-
-        {/* Form */}
-        <div className="card p-7">
-          <AnimatePresence mode="wait">
-            {sent ? (
-              <motion.div
-                key="success"
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-10"
-              >
-                <CheckCircle2 size={44} className="text-emerald-500 mx-auto mb-3" />
-                <p className="font-display font-bold text-lg text-green-700">Message sent!</p>
-                <p className="text-sm text-green-600 mt-1">We usually reply within one business day.</p>
-                <button onClick={() => setSent(false)} className="mt-6 text-sm font-semibold text-green-600 hover:text-green-800">
-                  Send another message
-                </button>
-              </motion.div>
-            ) : (
-              <motion.form key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} onSubmit={handleSubmit} className="space-y-4">
-                <h2 className="font-display font-bold text-lg text-green-700 mb-1">Send us a message</h2>
-                {error && <p className="text-xs text-rose-600 bg-rose-50 px-3 py-2 rounded-lg">{error}</p>}
-                <div>
-                  <label className="text-xs font-semibold text-green-600 mb-1 block">Name</label>
-                  <input
-                    value={form.name}
-                    onChange={update("name")}
-                    placeholder="Your name"
-                    className="w-full px-4 py-2.5 rounded-lg border border-green-100 focus:border-green-500 outline-none text-sm bg-white"
-                  />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs font-semibold text-green-600 mb-1 block">Email</label>
-                    <input
-                      type="email"
-                      value={form.email}
-                      onChange={update("email")}
-                      placeholder="you@business.com"
-                      className="w-full px-4 py-2.5 rounded-lg border border-green-100 focus:border-green-500 outline-none text-sm bg-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs font-semibold text-green-600 mb-1 block">Phone (optional)</label>
-                    <input
-                      value={form.phone}
-                      onChange={update("phone")}
-                      placeholder="98765 43210"
-                      className="w-full px-4 py-2.5 rounded-lg border border-green-100 focus:border-green-500 outline-none text-sm bg-white"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-green-600 mb-1 block">Message</label>
-                  <textarea
-                    value={form.message}
-                    onChange={update("message")}
-                    rows={4}
-                    placeholder="How can we help?"
-                    className="w-full px-4 py-2.5 rounded-lg border border-green-100 focus:border-green-500 outline-none text-sm bg-white resize-none"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-brand shadow-brand hover:opacity-95 text-white font-semibold py-3 rounded-xl text-sm transition-opacity"
-                >
-                  Send message
-                </button>
-              </motion.form>
-            )}
-          </AnimatePresence>
-        </div>
       </section>
 
       {/* Map */}
-      <section className="max-w-6xl mx-auto px-6 pb-20">
-        <div className="card overflow-hidden">
+      <section className="max-w-5xl mx-auto px-6 pb-20">
+        <p className="flex items-start gap-2 text-sm text-green-700 mb-4 justify-center text-center">
+          <MapPin size={16} className="shrink-0 mt-0.5" />
+          Thirupay Technologies Private Limited, Annai Parvathi Nagar, opposite to Collectorate Office, Vengikkal, Tiruvannamalai - 606604
+        </p>
+        <div className="card overflow-hidden rounded-3xl">
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d124778.27316702453!2d78.99565857982758!3d12.226528614511835!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4c3d7010778e4289%3A0x4a7c742efcc58bf5!2sThiruPay%20Technologies%20Pvt%20Ltd!5e0!3m2!1sen!2sin!4v1790836397145!5m2!1sen!2sin"
             width="100%"

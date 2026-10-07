@@ -61,13 +61,16 @@ export default function SettlementShowcase() {
       >
         <div className="space-y-4">
           {/* Header */}
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
-                <Building2 size={16} />
-              </div>
-              <div>
-                <h4 className="font-display font-bold text-slate-900 text-sm">
+          <div className="flex items-center justify-between gap-3 pb-3 border-b border-slate-100">
+            <div className="flex items-center gap-3 min-w-0">
+              {/* Full ThiruPay logo */}
+              <img
+                src="/brand/logo-full.png"
+                alt="ThiruPay"
+                className="h-10 w-auto object-contain shrink-0"
+              />
+              <div className="min-w-0">
+                <h4 className="font-display font-bold text-slate-900 text-sm leading-tight">
                   Automated Bank Settlement
                 </h4>
                 <p className="text-[10px] text-slate-400">Direct Deposit • T+1 Cycle</p>
@@ -75,7 +78,7 @@ export default function SettlementShowcase() {
             </div>
             <button
               onClick={handleRefresh}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+              className="shrink-0 p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
               title="Refresh status"
             >
               <RefreshCw size={14} className={isRefreshing ? "animate-spin text-emerald-600" : ""} />
@@ -91,7 +94,14 @@ export default function SettlementShowcase() {
             }`}
           >
             <div className="flex items-center justify-between text-[11px] text-slate-300 mb-1">
-              <span>{tab === "settled" ? "Total Payout Credited" : "Pending Next Clearance"}</span>
+              <span className="flex items-center gap-1.5">
+                <img
+                  src="/brand/logo-icon-white.png"
+                  alt="ThiruPay"
+                  className="w-3.5 h-3.5 object-contain"
+                />
+                {tab === "settled" ? "Total Payout Credited" : "Pending Next Clearance"}
+              </span>
               <span
                 className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
                   tab === "settled"
@@ -158,13 +168,13 @@ export default function SettlementShowcase() {
         {/* Footer Guarantee Strip */}
         <div className="mt-4 pt-2 flex items-center justify-around text-[9px] font-semibold text-slate-400 border-t border-slate-100">
           <span className="flex items-center gap-1">
-            <ShieldCheck size={11} className="text-emerald-500" /> RBI Nodal Flow
+            <ShieldCheck size={11} className="text-emerald-500" /> Direct Bank Deposit
           </span>
           <span className="flex items-center gap-1">
             <Clock size={11} className="text-orange-500" /> T+1 Daily Automated
           </span>
           <span className="flex items-center gap-1">
-            <Receipt size={11} className="text-sky-500" /> 100% Tax Compliant
+            <Receipt size={11} className="text-sky-500" /> Settlement Advice PDF
           </span>
         </div>
       </motion.div>

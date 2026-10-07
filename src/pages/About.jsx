@@ -16,10 +16,11 @@ import {
   CheckCircle2,
   Eye,
   Target,
+  Languages,
 } from "lucide-react";
 import PublicNavbar from "../components/PublicNavbar";
 import PublicFooter from "../components/PublicFooter";
-import { CITIES, TRUST_BADGES } from "../data/landingContent";
+import { TRUST_BADGES } from "../data/landingContent";
 import sirPhoto from "../assets/sir.jpg";
 
 const HERO_INDICATORS = [
@@ -40,6 +41,22 @@ const NUMBER_STATS = [
   { value: "0%", label: "Setup fee" },
   { value: "24/7", label: "QR & payment links" },
   { value: "100%", label: "Verified settlements" },
+];
+
+const COVERAGE_DOTS = [
+  { top: "12%", left: "22%" }, { top: "8%", left: "48%" }, { top: "16%", left: "72%" },
+  { top: "30%", left: "14%" }, { top: "26%", left: "38%" }, { top: "32%", left: "62%" },
+  { top: "28%", left: "84%" }, { top: "48%", left: "26%" }, { top: "44%", left: "70%" },
+  { top: "66%", left: "18%" }, { top: "62%", left: "44%" }, { top: "70%", left: "66%" },
+  { top: "64%", left: "88%" }, { top: "84%", left: "32%" }, { top: "86%", left: "58%" },
+  { top: "82%", left: "80%" },
+];
+
+const COVERAGE_BADGES = [
+  { icon: MapPin, label: "Statewide coverage" },
+  { icon: Languages, label: "Tamil & English support" },
+  { icon: Zap, label: "Fast settlements" },
+  { icon: ShieldCheck, label: "Secure payments" },
 ];
 
 const fadeUp = {
@@ -206,7 +223,7 @@ export default function About() {
               />
             </div>
             <div className="text-center sm:text-left">
-              <p className="text-orange-500 text-xs font-semibold tracking-wide mb-3">Meet the founder</p>
+              <p className="text-orange-500 text-xs font-semibold tracking-wide mb-3">Meet our founder</p>
               <h2 className="font-display font-bold text-2xl sm:text-[1.85rem] text-green-800 mb-4 leading-[1.2] max-w-[420px]">
                 Building financial tools with merchants at the center
               </h2>
@@ -310,41 +327,39 @@ export default function About() {
           <motion.div {...fadeUp} className="relative order-2 lg:order-1">
             <div className="bg-soft rounded-[24px] aspect-square max-w-sm mx-auto relative overflow-hidden">
               <div className="absolute inset-0 grid-fade" />
-              {[
-                { top: "22%", left: "38%" },
-                { top: "40%", left: "58%" },
-                { top: "55%", left: "32%" },
-                { top: "62%", left: "50%" },
-                { top: "35%", left: "22%" },
-                { top: "70%", left: "65%" },
-                { top: "48%", left: "44%", big: true },
-              ].map((p, i) => (
+              {COVERAGE_DOTS.map((p, i) => (
                 <span
                   key={i}
-                  className={`absolute rounded-full ${p.big ? "w-3.5 h-3.5 bg-orange-500" : "w-2.5 h-2.5 bg-green-400"}`}
-                  style={{ top: p.top, left: p.left }}
+                  className="absolute w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse"
+                  style={{ top: p.top, left: p.left, animationDelay: `${i * 0.15}s` }}
                 />
               ))}
+              <span
+                className="absolute w-4 h-4 rounded-full bg-orange-500 ring-8 ring-orange-100"
+                style={{ top: "50%", left: "50%" }}
+              />
             </div>
           </motion.div>
 
           <motion.div {...fadeUp} transition={{ ...fadeUp.transition, delay: 0.1 }} className="order-1 lg:order-2">
             <p className="text-orange-500 text-xs font-semibold tracking-wide mb-3">Where we operate</p>
-            <h2 className="font-display font-bold text-[1.75rem] text-green-800 mb-6 leading-tight max-w-md">
-              Growing with businesses across Tamil Nadu
+            <h2 className="font-display font-bold text-[1.75rem] text-green-800 mb-4 leading-tight max-w-md">
+              Supporting businesses across all of Tamil Nadu
             </h2>
-            <div className="flex flex-wrap gap-2.5 mb-4">
-              {CITIES.map((c) => (
+            <p className="text-[15px] text-green-500 leading-relaxed max-w-[34rem] mb-6">
+              From big cities to small towns, ThiruPay helps local businesses accept payments and get settled, wherever they are.
+            </p>
+            <div className="flex flex-wrap gap-2.5">
+              {COVERAGE_BADGES.map(({ icon: Icon, label }) => (
                 <span
-                  key={c}
+                  key={label}
                   className="inline-flex items-center gap-1.5 text-xs font-medium text-green-700 bg-green-50 px-3.5 py-2 rounded-full"
                 >
-                  <MapPin size={12} className="text-orange-500" />
-                  {c}
+                  <Icon size={12} className="text-orange-500" />
+                  {label}
                 </span>
               ))}
             </div>
-            <p className="text-xs font-medium text-green-500">and growing across Tamil Nadu</p>
           </motion.div>
         </div>
       </section>

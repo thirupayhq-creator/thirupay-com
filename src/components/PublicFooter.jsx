@@ -1,8 +1,5 @@
 import { Link } from "react-router-dom";
-import { ShieldCheck, BadgeCheck, Lock } from "lucide-react";
 
-// Inline SVG icons for socials — avoids depending on lucide-react's social
-// icon set, which has changed/removed exports (e.g. "Facebook") across versions.
 const IconX = (props) => (
   <svg viewBox="0 0 24 24" fill="currentColor" width={16} height={16} {...props}>
     <path d="M18.24 2H21l-6.6 7.54L22.2 22h-6.3l-4.94-6.46L5.3 22H2.5l7.06-8.07L1.8 2h6.46l4.47 5.9L18.24 2Zm-1.1 18.2h1.75L7.4 3.7H5.53L17.14 20.2Z" />
@@ -29,18 +26,57 @@ const IconYoutube = (props) => (
   </svg>
 );
 
-const SOCIALS = [
-  { icon: IconX, label: "X", href: "#" },
-  { icon: IconLinkedin, label: "LinkedIn", href: "#" },
-  { icon: IconInstagram, label: "Instagram", href: "#" },
-  { icon: IconFacebook, label: "Facebook", href: "#" },
-  { icon: IconYoutube, label: "YouTube", href: "#" },
-];
+// Apple logo as inline SVG (the  character only renders on Apple devices)
+const IconApple = (props) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" width={18} height={18} {...props}>
+    <path d="M16.37 12.6c-.02-2.2 1.8-3.26 1.88-3.31-1.02-1.5-2.62-1.7-3.19-1.73-1.36-.14-2.65.8-3.34.8-.69 0-1.75-.78-2.88-.76-1.48.02-2.85.86-3.61 2.19-1.54 2.67-.39 6.62 1.1 8.79.73 1.06 1.6 2.25 2.74 2.21 1.1-.04 1.52-.71 2.85-.71 1.33 0 1.7.71 2.87.69 1.19-.02 1.94-1.08 2.66-2.15.84-1.23 1.19-2.42 1.21-2.48-.03-.01-2.3-.88-2.32-3.54ZM14.2 6.1c.6-.73 1.01-1.75.9-2.76-.87.04-1.92.58-2.54 1.31-.56.65-1.05 1.69-.92 2.68.97.08 1.96-.5 2.56-1.23Z" />
+  </svg>
+);
 
-const BADGES = [
-  { icon: ShieldCheck, label: "PCI DSS" },
-  { icon: BadgeCheck, label: "ISO 27001" },
-  { icon: Lock, label: "SOC 2" },
+// Floating app-icon badge (top-right of the white card, like IppoPay).
+// If you have a ThiruPay icon-only image, set LOGO_ICON to its path
+// (example: "/brand/logo-icon.png") and it will be used instead of the "T" mark.
+const LOGO_ICON = "/brand/logo-icon-white.png";
+
+const AppIconBadge = () => (
+  <div
+    className="hidden lg:flex absolute -top-6 right-8 h-14 w-14 items-center justify-center rounded-2xl
+               bg-gradient-to-br from-[#0b2447] to-[#ea580c] text-white
+               shadow-[0_10px_30px_rgba(234,88,12,0.45)] ring-4 ring-white/70"
+    aria-hidden="true"
+  >
+    {LOGO_ICON ? (
+      <img src={LOGO_ICON} alt="" className="h-8 w-8 object-contain" />
+    ) : (
+      <svg viewBox="0 0 24 24" width={28} height={28} fill="none" stroke="currentColor" strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M5 6h14" />
+        <path d="M12 6v13" />
+        <path d="M8 12.5c1.2 1.1 2.5 1.6 4 1.6" />
+      </svg>
+    )}
+  </div>
+);
+
+// Faint watermark shapes inside the brand card (fills the empty centre)
+const CardWatermark = () => (
+  <svg
+    className="pointer-events-none absolute inset-0 h-full w-full"
+    viewBox="0 0 400 400"
+    preserveAspectRatio="xMidYMid slice"
+    aria-hidden="true"
+  >
+    <polygon points="90,330 250,150 420,190 300,380" fill="white" fillOpacity="0.05" />
+    <polygon points="30,300 170,150 300,175 190,330" fill="white" fillOpacity="0.06" />
+    <circle cx="340" cy="90" r="90" fill="#ea580c" fillOpacity="0.10" />
+  </svg>
+);
+
+const SOCIALS = [
+  { icon: IconX, label: "X", href: "https://x.com/Thirupay" },
+  { icon: IconLinkedin, label: "LinkedIn", href: "https://www.linkedin.com/company/sonachalapay/posts/?feedView=all" },
+  { icon: IconInstagram, label: "Instagram", href: "https://www.instagram.com/thiru_pay/?hl=en" },
+  { icon: IconFacebook, label: "Facebook", href: "https://www.facebook.com/profile.php?id=61591015570749" },
+  { icon: IconYoutube, label: "YouTube", href: "https://www.youtube.com/@Thirupay" },
 ];
 
 export default function PublicFooter() {
@@ -49,48 +85,49 @@ export default function PublicFooter() {
       <div className="max-w-6xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-10">
           {/* Left brand card */}
-          <div className="bg-brand rounded-2xl p-8 flex flex-col justify-between min-h-[300px]">
-            <span className="font-display font-extrabold text-2xl text-white tracking-tight">
-              Thiru<span className="text-orange-300">Pay</span>
-            </span>
+          <div className="relative overflow-hidden bg-brand rounded-2xl p-8 flex flex-col justify-between min-h-[300px]">
+            <CardWatermark />
 
-            <div className="space-y-4">
-              <div className="flex flex-wrap gap-3">
-                <a
-                  href="#"
-                  className="flex items-center gap-2 bg-black hover:bg-neutral-800 text-white text-xs font-semibold px-3.5 py-2.5 rounded-lg transition-colors"
-                >
-                  <span className="text-base leading-none">▶</span>
-                  <span className="text-left leading-tight">
-                    Get it on<br />Google Play
-                  </span>
-                </a>
-                <a
-                  href="#"
-                  className="flex items-center gap-2 bg-black hover:bg-neutral-800 text-white text-xs font-semibold px-3.5 py-2.5 rounded-lg transition-colors"
-                >
-                  <span className="text-base leading-none"></span>
-                  <span className="text-left leading-tight">
-                    Download on<br />App Store
-                  </span>
-                </a>
-              </div>
+            {/* Logo inside white pill so dark-blue text is visible */}
+            <Link to="/" className="relative inline-block self-start bg-white rounded-xl px-4 py-2.5">
+              <img
+                src="/brand/logo-full.png"
+                alt="ThiruPay"
+                className="h-9 w-auto object-contain"
+              />
+            </Link>
 
-              <div className="flex flex-wrap items-center gap-2">
-                {BADGES.map(({ icon: Icon, label }) => (
-                  <span
-                    key={label}
-                    className="flex items-center gap-1.5 bg-white/10 border border-white/15 text-white text-[11px] font-medium px-2.5 py-1.5 rounded-md"
-                  >
-                    <Icon size={13} /> {label}
-                  </span>
-                ))}
-              </div>
+            {/* Tagline fills the middle gap */}
+            <p className="relative my-8 max-w-[230px] text-xl font-semibold leading-snug text-white/90">
+              Powering payments for modern India.
+            </p>
+
+            <div className="relative flex flex-wrap gap-3">
+              <a
+                href="#"
+                className="flex items-center gap-2 bg-black hover:bg-neutral-800 text-white text-xs font-semibold px-3.5 py-2.5 rounded-lg transition-colors"
+              >
+                <span className="text-base leading-none">▶</span>
+                <span className="text-left leading-tight">
+                  Get it on<br />Google Play
+                </span>
+              </a>
+              <a
+                href="#"
+                className="flex items-center gap-2 bg-black hover:bg-neutral-800 text-white text-xs font-semibold px-3.5 py-2.5 rounded-lg transition-colors"
+              >
+                <IconApple />
+                <span className="text-left leading-tight">
+                  Download on<br />App Store
+                </span>
+              </a>
             </div>
           </div>
 
-          {/* Right box — columns, contact, copyright and socials all live inside one card */}
-          <div className="bg-white rounded-2xl p-8 flex flex-col">
+          {/* Right box */}
+          <div className="relative bg-white rounded-2xl p-8 flex flex-col">
+            <AppIconBadge />
+
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-8">
               <div>
                 <p className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-3">
@@ -152,11 +189,13 @@ export default function PublicFooter() {
 
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-xs text-green-600">© 2026 ThiruPay. All rights reserved.</p>
-              <div className="flex items-center gap-4 text-green-400">
+              <div className="relative z-10 flex items-center gap-4 text-green-400">
                 {SOCIALS.map(({ icon: Icon, label, href }) => (
                   <a
                     key={label}
                     href={href}
+                    target={href.startsWith("http") ? "_blank" : undefined}
+                    rel="noopener noreferrer"
                     aria-label={label}
                     className="hover:text-green-700 transition-colors"
                   >
@@ -169,7 +208,7 @@ export default function PublicFooter() {
         </div>
 
         <p className="text-[11px] text-green-500 text-center mt-6">
-          Demo prototype — not a licensed payment aggregator.
+         
         </p>
       </div>
     </footer>

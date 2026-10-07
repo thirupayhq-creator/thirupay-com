@@ -5,10 +5,8 @@ import {
   ArrowRight,
   ChevronDown,
   ChevronLeft,
-  Check,
   Sparkles,
   ShieldCheck,
-  Zap,
   Lock,
   Building2,
   CheckCircle2,
@@ -30,7 +28,7 @@ const PRODUCT_TRUST_POINTS = {
     "0% MDR on UPI Transfers",
     "T+1 Direct Bank Deposit",
     "Real-time SoundBox Sync",
-    "NPCI & RBI Compliant",
+    "KYC Verified Merchants",
   ],
   "payment-links": [
     "1-Tap WhatsApp Share",
@@ -42,7 +40,7 @@ const PRODUCT_TRUST_POINTS = {
     "T+1 Daily Automated",
     "Official Bank UTR Numbers",
     "₹0 Payout Transfer Fee",
-    "RBI Compliant Nodal Flow",
+    "Live Settlement Status",
   ],
   "business-loans": [
     "Up to ₹2,00,000 Limit",
@@ -107,7 +105,7 @@ export default function ProductDetail() {
     "0% MDR on UPI Transfers",
     "T+1 Direct Bank Deposit",
     "Real-time SoundBox Sync",
-    "NPCI & RBI Compliant",
+    "KYC Verified Merchants",
   ];
 
   return (
@@ -329,66 +327,6 @@ export default function ProductDetail() {
         </section>
       )}
 
-      {/* Comparison Matrix (If available) */}
-      {item.comparison && item.comparison.length > 0 && (
-        <section className="max-w-6xl mx-auto px-6 py-20">
-          <div className="text-center max-w-xl mx-auto mb-12">
-            <p className="text-green-600 text-xs font-bold uppercase tracking-wider mb-2">
-              The ThiruPay Difference
-            </p>
-            <h2 className="font-display font-bold text-3xl text-green-900">
-              Why merchants choose ThiruPay
-            </h2>
-            <p className="text-sm text-green-600 mt-2">
-              See how our digital collections outperform old POS card swipe machines and cash.
-            </p>
-          </div>
-
-          <div className="card overflow-hidden border border-slate-200">
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse min-w-[620px]">
-                <thead>
-                  <tr className="bg-green-50 border-b border-green-100">
-                    <th className="text-left text-xs font-bold text-green-800 uppercase tracking-wide py-4 px-5 w-[25%]">
-                      Feature / Metric
-                    </th>
-                    <th className="text-left text-xs font-bold text-slate-500 uppercase tracking-wide py-4 px-5">
-                      Traditional POS Swiping
-                    </th>
-                    <th className="text-left text-xs font-bold text-slate-500 uppercase tracking-wide py-4 px-5">
-                      Cash / Manual NEFT
-                    </th>
-                    <th className="text-left text-xs font-bold text-orange-600 uppercase tracking-wide py-4 px-5 bg-orange-50/50">
-                      ThiruPay Solution
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {item.comparison.map((row) => (
-                    <tr key={row.metric} className="border-t border-slate-100 hover:bg-slate-50/60 transition-colors">
-                      <td className="py-3.5 px-5 text-xs font-bold text-green-900">
-                        {row.metric}
-                      </td>
-                      <td className="py-3.5 px-5 text-xs text-slate-500">
-                        {row.pos}
-                      </td>
-                      <td className="py-3.5 px-5 text-xs text-slate-500">
-                        {row.cash}
-                      </td>
-                      <td className="py-3.5 px-5 text-xs font-bold text-green-900 bg-orange-50/30">
-                        <span className="inline-flex items-center gap-1.5 text-emerald-700">
-                          <Check size={14} className="text-emerald-500 shrink-0" /> {row.thirupay}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* How it works (Step by Step) */}
       <section className="bg-white border-y border-green-100">
         <div className="max-w-6xl mx-auto px-6 py-20">
@@ -417,37 +355,37 @@ export default function ProductDetail() {
         </div>
       </section>
 
-      {/* Security & Bank Grade Trust Strip */}
+      {/* Security Strip */}
       <section className="bg-[#071D34] text-white py-14">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center max-w-xl mx-auto mb-10">
             <span className="inline-flex items-center gap-1.5 text-xs font-bold text-orange-400 uppercase tracking-widest bg-white/10 px-3 py-1 rounded-full mb-3">
-              <ShieldCheck size={14} /> Bank-Grade Security
+              <ShieldCheck size={14} /> Security
             </span>
             <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">
-              Every rupee protected by bank-level encryption
+              Security is built into everything we do
             </h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div className="bg-white/5 border border-white/10 p-5 rounded-2xl">
               <Lock size={22} className="text-orange-400 mx-auto mb-2" />
-              <p className="font-bold text-sm text-white">256-Bit SSL</p>
-              <p className="text-[11px] text-slate-400 mt-1">End-to-end encrypted payload</p>
+              <p className="font-bold text-sm text-white">Secure Connections</p>
+              <p className="text-[11px] text-slate-400 mt-1">Data protected with encryption in transit</p>
             </div>
             <div className="bg-white/5 border border-white/10 p-5 rounded-2xl">
-              <Building2 size={22} className="text-emerald-400 mx-auto mb-2" />
-              <p className="font-bold text-sm text-white">NPCI Certified</p>
-              <p className="text-[11px] text-slate-400 mt-1">Official UPI 2.0 network standards</p>
+              <CheckCircle2 size={22} className="text-emerald-400 mx-auto mb-2" />
+              <p className="font-bold text-sm text-white">Every Payment Tracked</p>
+              <p className="text-[11px] text-slate-400 mt-1">Each transaction recorded with live status</p>
             </div>
             <div className="bg-white/5 border border-white/10 p-5 rounded-2xl">
               <ShieldCheck size={22} className="text-sky-400 mx-auto mb-2" />
-              <p className="font-bold text-sm text-white">RBI Guidelines</p>
-              <p className="text-[11px] text-slate-400 mt-1">Compliant nodal settlement flow</p>
+              <p className="font-bold text-sm text-white">Verified Merchants</p>
+              <p className="text-[11px] text-slate-400 mt-1">KYC document check before account activation</p>
             </div>
             <div className="bg-white/5 border border-white/10 p-5 rounded-2xl">
-              <Zap size={22} className="text-amber-400 mx-auto mb-2" />
-              <p className="font-bold text-sm text-white">99.98% Gateway Uptime</p>
-              <p className="text-[11px] text-slate-400 mt-1">Zero downtime at peak billing hours</p>
+              <Building2 size={22} className="text-amber-400 mx-auto mb-2" />
+              <p className="font-bold text-sm text-white">Role-Based Access</p>
+              <p className="text-[11px] text-slate-400 mt-1">Separate access for owner, admin and staff</p>
             </div>
           </div>
         </div>
