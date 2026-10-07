@@ -10,10 +10,10 @@ export default function AdminLogin() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    const res = login(form.email, form.password);
+    const res = await login(form.email, form.password);
     if (!res.ok) {
       setError(res.error);
       return;

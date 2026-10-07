@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FileText, Check, X, Eye, AlertTriangle, ChevronDown, ChevronUp, Ban, Flag, FlagOff, ShieldCheck } from "lucide-react";
 import { db } from "../../data/mockData";
 import { useAuth } from "../../context/AuthContext";
 import { logAuditEvent } from "../../data/auditLog";
 import StatusBadge from "../../components/StatusBadge";
+import { kycApi } from "../../services/api";
+
 
 const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
 
@@ -58,18 +60,76 @@ export default function KYCVerification() {
   const [, setTick] = useState(0);
   const [viewed, setViewed] = useState(new Set());
   const [expanded, setExpanded] = useState(new Set());
-  const merchants = db.getMerchants();
+  const [backendKycs, setBackendKycs] = useState([]);
 
-  const rows = merchants
+  useEffect(() => {
+    kycApi.getPending()
+      .then((res) => {
+        if (res?.data && Array.isArray(res.data)) {
+          setBackendKycs(res.data);
+        }
+      })
+      .catch((e) => console.warn("Could not load backend pending KYCs:", e.message));
+  }, []);
+
+  const localMerchants = db.getMerchants();
+  const localRows = localMerchants
     .map((m) => ({ merchant: m, kyc: db.getKycByMerchant(m.merchant_id) }))
     .filter((r) => r.kyc);
 
-  const decide = (merchantId, decision) => {
+  // Merge backend records with local
+  const rows = [...localRows];
+  backendKycs.forEach((bk) => {
+    const exists = rows.some((r) => r.merchant?.merchant_id === bk.merchantId || r.kyc?.id === bk.id);
+    if (!exists && bk.merchant) {
+      rows.unshift({
+        merchant: {
+          merchant_id: bk.merchantId,
+          business_name: bk.merchant.businessName,
+          owner_name: bk.merchant.ownerName,
+          status: "pending",
+          phone: bk.merchant.phone,
+          category: bk.merchant.businessCategory,
+          entity_type: bk.merchant.entityType,
+        },
+        kyc: {
+          id: bk.id,
+          kyc_id: bk.id,
+          merchant_id: bk.merchantId,
+          pan: bk.pan,
+          pan_document_name: bk.panDocumentName,
+          pan_document_url: bk.panDocumentUrl,
+          identity_doc_type: bk.identityDocType,
+          identity_doc_number: bk.identityDocNumber,
+          identity_document_name: bk.identityDocumentName,
+          identity_document_url: bk.identityDocumentUrl,
+          number_of_directors: bk.numberOfDirectors,
+          directors_zip_name: bk.directorsZipName,
+          directors_zip_url: bk.directorsZipUrl,
+          incorporation_document_name: bk.incorporationDocumentName,
+          incorporation_document_url: bk.incorporationDocumentUrl,
+          verification_status: bk.status?.toLowerCase() || "pending",
+        },
+      });
+    }
+  });
+
+  const decide = async (merchantId, decision) => {
     if (isSuperAdmin) return;
+    const targetRow = rows.find((r) => r.merchant.merchant_id === merchantId);
+    const kycId = targetRow?.kyc?.id || targetRow?.kyc?.kyc_id;
+    if (kycId) {
+      try {
+        await kycApi.verify(kycId, decision === "approved" ? "APPROVE" : "REJECT");
+      } catch (err) {
+        console.warn("Backend verify failed:", err.message);
+      }
+    }
     db.updateKycStatus(merchantId, decision, session);
     db.updateMerchant(merchantId, { status: decision === "approved" ? "active" : "rejected" });
     setTick((t) => t + 1);
   };
+
 
   const markViewed = (viewKey) => {
     setViewed((prev) => new Set(prev).add(viewKey));

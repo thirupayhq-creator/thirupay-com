@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { IndianRupee, Receipt, QrCode, Link2, Clock, Wallet, Sparkles } from "lucide-react";
+import { useState, useEffect } from "react";
+import { IndianRupee, Receipt, QrCode, Link2, Clock, Wallet, Sparkles, ExternalLink, RefreshCw, CreditCard } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell } from "recharts";
 import { useAuth } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
@@ -9,6 +10,7 @@ import StatCard from "../../components/StatCard";
 import StatusBadge from "../../components/StatusBadge";
 import { BUSINESS_TOOLS } from "../../data/businessTools";
 import PromoBanner from "../../components/PromoBanner";  
+import { merchantApi } from "../../services/api";
 
 function timeAgo(iso) {
   const diff = Date.now() - new Date(iso).getTime();
@@ -26,6 +28,41 @@ export default function Dashboard() {
   const txns = db.getTxnsByMerchant(session.merchantId);
   const links = db.getLinksByMerchant(session.merchantId);
   const settlements = db.getSettlementsByMerchant(session.merchantId);
+
+  const [cashfreeInfo, setCashfreeInfo] = useState(null);
+  const [syncing, setSyncing] = useState(false);
+
+  useEffect(() => {
+    merchantApi.getProfile()
+      .then((res) => {
+        if (res?.data) {
+          const m = res.data.merchant || res.data;
+          setCashfreeInfo({
+            cashfreeStatus: m.cashfreeStatus || "PENDING",
+            cashfreeMerchantId: m.cashfreeMerchantId,
+            onboardingLink: res.data.cashfreeOnboardingLink || m.cashfreeOnboardingLink,
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleSyncCashfree = async () => {
+    setSyncing(true);
+    try {
+      const res = await merchantApi.syncCashfreeStatus();
+      if (res?.data) {
+        setCashfreeInfo((prev) => ({
+          ...prev,
+          cashfreeStatus: res.data.cashfreeStatus,
+        }));
+      }
+    } catch (err) {
+      console.warn("Failed to sync Cashfree status:", err.message);
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   const today = new Date().toDateString();
   const todaysTxns = txns.filter((t) => new Date(t.created_at).toDateString() === today);
@@ -59,6 +96,46 @@ export default function Dashboard() {
         
       </div>
         <PromoBanner merchant={merchant} />  
+
+      {/* Cashfree Partner Status Card */}
+      {cashfreeInfo && cashfreeInfo.cashfreeStatus !== "ACTIVE" && (
+        <div className="card p-5 mb-6 border-l-4 border-indigo-600 bg-gradient-to-r from-indigo-50/70 via-white to-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+          <div className="flex items-start sm:items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0">
+              <CreditCard size={20} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <p className="font-semibold text-gray-800 text-sm">Cashfree Partner Account</p>
+                <span className="text-[10px] font-semibold uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-200">
+                  Partner Status: {cashfreeInfo.cashfreeStatus || "Email Verified"}
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 mt-1 max-w-xl">
+                Sub-merchant registered on Cashfree Partner Network (ID: <code className="text-gray-700 font-mono text-[11px]">{cashfreeInfo.cashfreeMerchantId || session.merchantId}</code>). In ThiruPay's Partner model, KYC is verified in-app by ThiruPay Compliance. You do not need to register on Cashfree's external website.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={handleSyncCashfree}
+              disabled={syncing}
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-60"
+              title="Refresh live status from Cashfree"
+            >
+              <RefreshCw size={13} className={syncing ? "animate-spin" : ""} />
+              {syncing ? "Checking..." : "Sync Status"}
+            </button>
+            <Link
+              to="/merchant/kyc"
+              className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition-colors"
+            >
+              View In-App KYC
+            </Link>
+          </div>
+        </div>
+      )}
+
       {!isActive && (
         <div className="card p-5 mb-6 border-l-4 border-amber-400 flex items-center gap-4">
           <div className="w-10 h-10 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">

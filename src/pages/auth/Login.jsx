@@ -12,16 +12,24 @@ export default function Login() {
   const [error, setError] = useState("");
   const [showForgot, setShowForgot] = useState(false);
 
-  const handleSubmit = (e) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    const res = login(form.email, form.password);
-    if (!res.ok) {
-      setError(res.error);
-      return;
+    setLoading(true);
+    try {
+      const res = await login((form.email || "").trim(), form.password);
+      if (!res.ok) {
+        setError(res.error);
+        return;
+      }
+      navigate(res.session.role === "admin" ? "/admin" : "/merchant");
+    } finally {
+      setLoading(false);
     }
-    navigate(res.session.role === "admin" ? "/admin" : "/merchant");
   };
+
 
   return (
     <div className="min-h-screen bg-[#F6F7FB] flex items-center justify-center px-4 py-10">

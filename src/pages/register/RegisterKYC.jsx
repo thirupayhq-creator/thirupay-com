@@ -47,7 +47,9 @@ export default function RegisterKYC() {
   const identityDone = !!form.identityDocType && !!form.identityDocNumber?.trim() && !!files.identityFile;
   const companyDocsDone = parseInt(form.numberOfDirectors, 10) >= 2 && !!files.directorsZip && !!files.incorporationFile;
 
-  const handleSubmit = (e) => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError("");
 
@@ -111,39 +113,70 @@ export default function RegisterKYC() {
       return;
     }
 
-    // Everything the merchant filled in across the 3 pages goes in one go.
-    const res = registerMerchant(
-      { ...form, businessPhoto: files.businessPhoto || "" },
-      {
-        pan,
-        pan_document_name: files.panFile.name,
-        pan_document_url: files.panFile.data,
-        identity_doc_type: form.identityDocType,
-        identity_doc_number: form.identityDocNumber,
-        identity_document_name: files.identityFile.name,
-        identity_document_url: files.identityFile.data,
-        number_of_directors: directors,
-        directors_zip_name: files.directorsZip.name,
-        directors_zip_url: files.directorsZip.data,
-        incorporation_document_name: files.incorporationFile.name,
-        incorporation_document_url: files.incorporationFile.data,
+    setSubmitting(true);
+    try {
+      // Everything the merchant filled in across the 3 pages goes to backend in one go.
+      const res = await registerMerchant(
+        { ...form, businessPhoto: files.businessPhoto || "" },
+        {
+          pan,
+          pan_document_name: files.panFile.name,
+          pan_document_url: files.panFile.data,
+          identity_doc_type: form.identityDocType,
+          identity_doc_number: form.identityDocNumber,
+          identity_document_name: files.identityFile.name,
+          identity_document_url: files.identityFile.data,
+          number_of_directors: directors,
+          directors_zip_name: files.directorsZip.name,
+          directors_zip_url: files.directorsZip.data,
+          incorporation_document_name: files.incorporationFile.name,
+          incorporation_document_url: files.incorporationFile.data,
+        }
+      );
+
+      if (!res.ok) {
+        setSubmitError(res.error);
+        return;
       }
-    );
 
-    if (!res.ok) {
-      setSubmitError(res.error);
-      return;
+      showToast({
+        title: "Registration submitted",
+        subtitle: "Your KYC is with our team. We'll notify you once it's approved.",
+        type: "success",
+        duration: 5000,
+      });
+      markRegistrationComplete(); // draft is cleared when the wizard unmounts
+      navigate("/merchant", { replace: true });
+    } finally {
+      setSubmitting(false);
     }
-
-    showToast({
-      title: "Registration submitted",
-      subtitle: "Your KYC is with our team. We'll notify you once it's approved.",
-      type: "success",
-      duration: 5000,
-    });
-    markRegistrationComplete(); // draft is cleared when the wizard unmounts
-    navigate("/merchant", { replace: true });
   };
+
+  const handleSkipKYC = async () => {
+    setSubmitting(true);
+    setSubmitError("");
+    try {
+      const res = await registerMerchant(
+        { ...form, businessPhoto: files.businessPhoto || "" },
+        null
+      );
+      if (!res.ok) {
+        setSubmitError(res.error);
+        return;
+      }
+      showToast({
+        title: "Account created successfully",
+        subtitle: "You can complete your KYC verification anytime from your dashboard.",
+        type: "success",
+        duration: 5000,
+      });
+      markRegistrationComplete();
+      navigate("/merchant", { replace: true });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
 
   return (
     <>
@@ -325,7 +358,7 @@ export default function RegisterKYC() {
 
         {submitError && <p className="text-rose-600 text-xs font-medium">{submitError}</p>}
 
-        <div className="flex gap-3 pt-2">
+        <div className="flex flex-col sm:flex-row gap-3 pt-2">
           <Link
             to="/register/business"
             className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg border border-green-200 text-green-700 hover:bg-green-50 font-semibold text-sm transition-colors"
@@ -333,10 +366,19 @@ export default function RegisterKYC() {
             <ArrowLeft size={16} /> Back
           </Link>
           <button
-            type="submit"
-            className="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-2.5 rounded-lg transition-colors text-sm"
+            type="button"
+            onClick={handleSkipKYC}
+            disabled={submitting}
+            className="px-4 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold text-sm transition-colors"
           >
-            Submit for verification
+            Complete KYC later
+          </button>
+          <button
+            type="submit"
+            disabled={submitting}
+            className="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-2.5 rounded-lg transition-colors text-sm disabled:opacity-50"
+          >
+            {submitting ? "Submitting..." : "Submit for verification"}
           </button>
         </div>
       </form>

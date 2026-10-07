@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ShieldCheck, Upload, Clock, Plus, Minus } from "lucide-react";
+import { ShieldCheck, Upload, Clock, Plus, Minus, Loader2 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { db } from "../../data/mockData";
 import { compressImage } from "../../utils/imageCompress";
+import { kycApi } from "../../services/api";
+
 
 const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
 
@@ -72,6 +74,7 @@ export default function KYCUpload() {
   const navigate = useNavigate();
   const existing = db.getKycByMerchant(session.merchantId);
   const [submitted, setSubmitted] = useState(!!existing);
+  const [submitting, setSubmitting] = useState(false);
 
   const [openSection, setOpenSection] = useState("companyIdentity");
   const toggleSection = (key) => setOpenSection((prev) => (prev === key ? "" : key));
@@ -101,6 +104,39 @@ export default function KYCUpload() {
 
   const setError = (key, msg) => setFieldErrors((f) => ({ ...f, [key]: msg }));
 
+  // Fetch real KYC status from backend
+  useEffect(() => {
+    let isMounted = true;
+    kycApi.getStatus()
+      .then((res) => {
+        if (!isMounted || !res?.data?.kyc) return;
+        const k = res.data.kyc;
+        if (k.status === "SUBMITTED" || k.status === "VERIFIED") {
+          setSubmitted(true);
+        }
+        setForm((prev) => ({
+          ...prev,
+          pan: k.pan || prev.pan,
+          panFileName: k.panDocumentName || prev.panFileName,
+          panFileData: k.panDocumentUrl || prev.panFileData,
+          identityDocType: k.identityDocType || prev.identityDocType,
+          identityDocNumber: k.identityDocNumber || prev.identityDocNumber,
+          identityFileName: k.identityDocumentName || prev.identityFileName,
+          identityFileData: k.identityDocumentUrl || prev.identityFileData,
+          numberOfDirectors: k.numberOfDirectors || prev.numberOfDirectors,
+          directorsZipName: k.directorsZipName || prev.directorsZipName,
+          directorsZipUrl: k.directorsZipUrl || prev.directorsZipUrl,
+          incorporationFileName: k.incorporationDocumentName || prev.incorporationFileName,
+          incorporationFileData: k.incorporationDocumentUrl || prev.incorporationFileData,
+        }));
+      })
+      .catch((err) => {
+        console.warn("Could not fetch KYC status from backend:", err.message);
+      });
+
+    return () => { isMounted = false; };
+  }, []);
+
   const handleUpload = async (key, file, opts) => {
     if (!file) return;
     setError(key, "");
@@ -115,7 +151,7 @@ export default function KYCUpload() {
   const identityDocLabel =
     IDENTITY_DOC_TYPES.find((d) => d.value === form.identityDocType)?.label || "Document";
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError("");
 
@@ -154,28 +190,54 @@ export default function KYCUpload() {
       return;
     }
 
+    setSubmitting(true);
     try {
-      db.addKyc({
-        merchant_id: session.merchantId,
+      // 1. Submit to real backend API
+      await kycApi.submit({
         pan,
-        pan_document_name: form.panFileName,
-        pan_document_url: form.panFileData,
-        identity_doc_type: form.identityDocType,
-        identity_doc_number: form.identityDocNumber,
-        identity_document_name: form.identityFileName,
-        identity_document_url: form.identityFileData,
-        number_of_directors: directors,
-        directors_zip_name: form.directorsZipName,
-        directors_zip_url: form.directorsZipData,
-        incorporation_document_name: form.incorporationFileName,
-        incorporation_document_url: form.incorporationFileData,
-        verification_status: "pending",
+        panDocumentName: form.panFileName,
+        panDocumentUrl: form.panFileData,
+        identityDocType: form.identityDocType,
+        identityDocNumber: form.identityDocNumber,
+        identityDocumentName: form.identityFileName,
+        identityDocumentUrl: form.identityFileData,
+        numberOfDirectors: directors,
+        directorsZipName: form.directorsZipName,
+        directorsZipUrl: form.directorsZipData,
+        incorporationDocumentName: form.incorporationFileName,
+        incorporationDocumentUrl: form.incorporationFileData,
       });
+
+      // 2. Mirror into local store
+      try {
+        db.addKyc({
+          merchant_id: session.merchantId,
+          pan,
+          pan_document_name: form.panFileName,
+          pan_document_url: form.panFileData,
+          identity_doc_type: form.identityDocType,
+          identity_doc_number: form.identityDocNumber,
+          identity_document_name: form.identityFileName,
+          identity_document_url: form.identityFileData,
+          number_of_directors: directors,
+          directors_zip_name: form.directorsZipName,
+          directors_zip_url: form.directorsZipData,
+          incorporation_document_name: form.incorporationFileName,
+          incorporation_document_url: form.incorporationFileData,
+          verification_status: "pending",
+        });
+      } catch (localErr) {
+        console.warn("Local storage cache skipped:", localErr);
+      }
+
       setSubmitted(true);
-    } catch {
-      setSubmitError("Could not save — storage is full. Please try smaller files.");
+    } catch (err) {
+      setSubmitError(err.message || "Could not submit KYC documents.");
+    } finally {
+      setSubmitting(false);
     }
   };
+
 
   if (submitted) {
     return (
